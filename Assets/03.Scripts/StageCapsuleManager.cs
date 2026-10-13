@@ -28,28 +28,31 @@ public class StageCapsuleManager : MonoBehaviour
         // 기존에 남아있는 공이 있다면 제거 (재시작 대비)
         ClearExistingCapsules();
 
-        // 파란 공/노란 공 리스트 생성 및 무작위 셔플
-        List<GameObject> capsuleList = new List<GameObject>();
-        for (int i = 0; i < blueCount; i++) capsuleList.Add(blueCapsulePrefab);
-        for (int i = 0; i < yellowCount; i++) capsuleList.Add(yellowCapsulePrefab);
+        // 1. 노란 공(짝수: 0,2,4,6,8) 각 2개씩 총 10개 풀 생성 및 셔플
+        List<int> yellowNumbers = new List<int> { 0, 0, 2, 2, 4, 4, 6, 6, 8, 8 };
+        ShuffleList(yellowNumbers);
 
-        for (int i = 0; i < capsuleList.Count; i++)
-        {
-            GameObject temp = capsuleList[i];
-            int randomIndex = Random.Range(i, capsuleList.Count);
-            capsuleList[i] = capsuleList[randomIndex];
-            capsuleList[randomIndex] = temp;
-        }
+        // 2. 파란 공(홀수: 1,3,5,7,9) 각 2개씩 총 10개 풀 생성 및 셔플
+        List<int> blueNumbers = new List<int> { 1, 1, 3, 3, 5, 5, 7, 7, 9, 9 };
+        ShuffleList(blueNumbers);
 
-        // 약간의 위치 오프셋을 주며 순간적으로 연속 생성
-        StartCoroutine(SpawnRoutine(capsuleList));
+        // 3. 공 프리팹 리스트 구성 (어떤 공이 스폰될지 순서 셔플)
+        List<GameObject> capsulePrefabList = new List<GameObject>();
+        for (int i = 0; i < blueCount; i++) capsulePrefabList.Add(blueCapsulePrefab);
+        for (int i = 0; i < yellowCount; i++) capsulePrefabList.Add(yellowCapsulePrefab);
+        ShuffleList(capsulePrefabList);
+
+        // 4. 약간의 위치 오프셋을 주며 순간적으로 연속 생성 및 숫자 데이터 주입
+        StartCoroutine(SpawnRoutine(capsulePrefabList, yellowNumbers, blueNumbers));
     }
 
-    private IEnumerator SpawnRoutine(List<GameObject> capsuleList)
+    private IEnumerator SpawnRoutine(List<GameObject> prefabList, List<int> yellowNums, List<int> blueNums)
     {
         int spawnIndex = 0;
+        int yellowIndex = 0;
+        int blueIndex = 0;
 
-        foreach (GameObject prefab in capsuleList)
+        foreach (GameObject prefab in prefabList)
         {
             // 공이 스폰될 때마다 Y축 높이를 조금씩 올려서 위에서 순차적으로 떨어지게 함
             Vector3 randomOffset = new Vector3(
@@ -60,12 +63,45 @@ public class StageCapsuleManager : MonoBehaviour
 
             Quaternion randomRotation = Random.rotation;
 
-            GameObject capsule = Instantiate(prefab, spawnPoint.position + randomOffset, randomRotation, transform);
+            GameObject capsuleObj = Instantiate(prefab, spawnPoint.position + randomOffset, randomRotation, transform);
 
+            // 5. 생성된 공에 정확한 중복 없는 숫자 데이터 주입
+            CapsuleData capsuleData = capsuleObj.GetComponent<CapsuleData>();
+            if (capsuleData != null)
+            {
+                bool isYellow = capsuleObj.CompareTag("YellowCapsule");
+                int assignedNum = 0;
+
+                if (isYellow)
+                {
+                    assignedNum = yellowNums[yellowIndex];
+                    yellowIndex++;
+                }
+                else
+                {
+                    assignedNum = blueNums[blueIndex];
+                    blueIndex++;
+                }
+
+                capsuleData.SetCapsuleData(isYellow, assignedNum);
+            }
 
             spawnIndex++;
-
             yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+    /// <summary>
+    /// 리스트를 무작위로 섞는 함수 (Fisher-Yates Shuffle)
+    /// </summary>
+    private void ShuffleList<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int rnd = Random.Range(0, i + 1);
+            T temp = list[i];
+            list[i] = list[rnd];
+            list[rnd] = temp;
         }
     }
 

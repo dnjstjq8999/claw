@@ -31,11 +31,29 @@ public class StageUIManager : MonoBehaviour
 
     private void CreateCapsuleUI()
     {
-        Canvas canvas = Object.FindFirstObjectByType<Canvas>();
-        if (canvas == null) return;
+        // ★ 수정 포인트: 겹침 방지를 위해 World Space가 아닌 화면 전용 Overlay 캔버스를 안전하게 탐색 또는 생성
+        Canvas targetCanvas = null;
+        foreach (Canvas c in Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+        {
+            if (c.renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                targetCanvas = c;
+                break;
+            }
+        }
+
+        // 만약 화면 전용 캔버스가 없다면 새로 생성
+        if (targetCanvas == null)
+        {
+            GameObject canvasObj = new GameObject("StageUI_Canvas");
+            targetCanvas = canvasObj.AddComponent<Canvas>();
+            targetCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasObj.AddComponent<CanvasScaler>();
+            canvasObj.AddComponent<GraphicRaycaster>();
+        }
 
         GameObject panelObj = new GameObject("CapsuleUI_Panel");
-        panelObj.transform.SetParent(canvas.transform, false);
+        panelObj.transform.SetParent(targetCanvas.transform, false);
         RectTransform panelRect = panelObj.AddComponent<RectTransform>();
         panelRect.anchorMin = new Vector2(0, 1);
         panelRect.anchorMax = new Vector2(0, 1);
@@ -67,25 +85,24 @@ public class StageUIManager : MonoBehaviour
         GameObject iconObj = new GameObject("Icon");
         iconObj.transform.SetParent(rowObj.transform, false);
         RectTransform iconRect = iconObj.AddComponent<RectTransform>();
-        iconRect.sizeDelta = new Vector2(35, 35); // 아이콘 크기를 정사각형으로 넉넉하게 지정
+        iconRect.sizeDelta = new Vector2(35, 35);
 
         Image iconImage = iconObj.AddComponent<Image>();
         if (sprite != null) iconImage.sprite = sprite;
         else iconImage.color = iconColor;
 
-        // ★★★ 핵심: 이미지 원본 비율 유지 (찌그러짐 방지)
         iconImage.preserveAspect = true;
 
         // 개수 텍스트 오브젝트
         GameObject textObj = new GameObject("CountText");
         textObj.transform.SetParent(rowObj.transform, false);
         RectTransform textRect = textObj.AddComponent<RectTransform>();
-        textRect.sizeDelta = new Vector2(120, 40); // 가로 폭을 120으로 넉넉하게 늘리기
+        textRect.sizeDelta = new Vector2(120, 40);
         TextMeshProUGUI tmpText = textObj.AddComponent<TextMeshProUGUI>();
         tmpText.fontSize = 24;
         tmpText.color = Color.white;
         tmpText.alignment = TextAlignmentOptions.Left;
-        tmpText.enableWordWrapping = false; // 글자 자동 줄바꿈 방지
+        tmpText.enableWordWrapping = false;
 
         return tmpText;
     }

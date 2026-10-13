@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8f0528a22655d8c4a9b28d240098927e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 268904
+  packageName: Little Astronaut
+  packageVersion: 1.0
+  assetPath: Assets/Little Astronaut/Materials/Mat_Astronaut_White_HandPaint.mat
+  uploadId: 622837

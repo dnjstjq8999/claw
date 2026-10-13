@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3405d8c1974cc7f429941f0e84d6a295
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 268904
+  packageName: Little Astronaut
+  packageVersion: 1.0
+  assetPath: Assets/Little Astronaut/Materials/Mat_Astronaut_Orange_HandPaint.mat
+  uploadId: 622837

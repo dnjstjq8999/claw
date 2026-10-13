@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f1a238e53cadf5c4b90353aae6d9ee1c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 268904
+  packageName: Little Astronaut
+  packageVersion: 1.0
+  assetPath: Assets/Little Astronaut/Materials/Mat_Astronaut_Blue_HandPaint.mat
+  uploadId: 622837

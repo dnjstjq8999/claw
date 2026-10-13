@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a79485dce85aa5d4ebe0fe8614ee145e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 268904
+  packageName: Little Astronaut
+  packageVersion: 1.0
+  assetPath: Assets/Little Astronaut/Animations/Astronaut_animator.controller
+  uploadId: 622837

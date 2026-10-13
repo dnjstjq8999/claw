@@ -1553,7 +1553,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4007503666008048455, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.167
+      value: -0.075
       objectReference: {fileID: 0}
     - target: {fileID: 5211568584778583306, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
       propertyPath: sideCamera

@@ -1072,38 +1072,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &745288907 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4978875802327087407, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
-  m_PrefabInstance: {fileID: 8737181764162552463}
-  m_PrefabAsset: {fileID: 0}
---- !u!54 &745288911
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 745288907}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &825477645
 GameObject:
   m_ObjectHideFlags: 0
@@ -1553,7 +1521,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4007503666008048455, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.167
+      value: -0.005
       objectReference: {fileID: 0}
     - target: {fileID: 5211568584778583306, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
       propertyPath: sideCamera
@@ -1579,33 +1547,9 @@ PrefabInstance:
       propertyPath: playerController
       value: 
       objectReference: {fileID: 363378506}
-    - target: {fileID: 6447069099296964014, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
-      propertyPath: moveSpeed
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6447069099296964014, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
-      propertyPath: maxBounds.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6447069099296964014, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
-      propertyPath: maxBounds.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6447069099296964014, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
-      propertyPath: minBounds.x
-      value: -3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6447069099296964014, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
-      propertyPath: minBounds.y
-      value: -3.3
-      objectReference: {fileID: 0}
     - target: {fileID: 6971945739660005941, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
       propertyPath: m_Radius
       value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7074653952582142972, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
-      propertyPath: m_TagString
-      value: Handle
       objectReference: {fileID: 0}
     - target: {fileID: 7105950298237732988, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
       propertyPath: kickCenter
@@ -1619,17 +1563,10 @@ PrefabInstance:
       propertyPath: 'camerasToShake.Array.data[1]'
       value: 
       objectReference: {fileID: 261892502}
-    - target: {fileID: 8765755780143126583, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
-      propertyPath: m_UseGravity
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4978875802327087407, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 745288911}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

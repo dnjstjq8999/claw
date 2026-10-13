@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -13,9 +14,7 @@ public class PlayerController : MonoBehaviour
     public float gravity = -9.81f;
 
     [Header("--- 시점 회전 설정 (에임 동기화) ---")]
-    [Tooltip("Player 하위의 Main Camera Transform")]
     public Transform playerCamera;
-    [Tooltip("마우스 회전 감도 (필요에 따라 0.1~2.0 조절)")]
     public float mouseSensitivity = 1.0f;
     public float minVerticalAngle = -80f;
     public float maxVerticalAngle = 80f;
@@ -23,6 +22,8 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Vector3 velocity;
     private float xRotation = 0f; // 카메라 상하 각도
+
+    public bool canMove = true;
 
     void Start()
     {
@@ -34,7 +35,15 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        // 플레이어가 이동/시점 조작 상태인데 커서가 풀려있다면 강제로 다시 잠금
+        if (canMove && Cursor.lockState != CursorLockMode.Locked)
+        {
+            LockCursor(true);
+        }
+
         if (Keyboard.current == null || Mouse.current == null) return;
+
+        if (!canMove) return;
 
         // 1. 화면 중앙 에임 기준 시점 회전
         HandleMouseLook();
@@ -89,6 +98,22 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 마우스 커서 잠금/해제 제어
     /// </summary>
+    public void SetControllable(bool controllable)
+    {
+        canMove = controllable;
+
+        if (!controllable)
+        {
+            // 조작 차단 시 커서 해제 (기계 방향키 조작 편의를 위해)
+            LockCursor(false);
+        }
+        else
+        {
+            // 조작 복귀 시 커서 다시 잠금
+            LockCursor(true);
+        }
+    }
+
     public void LockCursor(bool isLocked)
     {
         if (isLocked)

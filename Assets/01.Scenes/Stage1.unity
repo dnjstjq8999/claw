@@ -124,7 +124,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4845922448186797099, guid: e6d917f85d8ec034899dee92eb9e6205, type: 3}
   m_PrefabInstance: {fileID: 7492905718475299460}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 910566138}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 442ea6c3e43fc2f4c905e809c05ab8a7, type: 3}
@@ -960,6 +960,24 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &910566138 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6224529372463993787, guid: e6d917f85d8ec034899dee92eb9e6205, type: 3}
+  m_PrefabInstance: {fileID: 7492905718475299460}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &910566142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910566138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 595a469473b5af3438278380bf22bc1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CapsuleOpenManager
+  clickDistance: 5
 --- !u!1 &918115737
 GameObject:
   m_ObjectHideFlags: 0
@@ -1129,8 +1147,8 @@ MonoBehaviour:
   standPrefab: {fileID: 8293612694811067084, guid: 460ceec91d31f1442ba9450b616e443b, type: 3}
   totalStands: 20
   columns: 5
-  spacingX: 0.5
-  spacingZ: 0.5
+  spacingX: 0.7
+  spacingZ: 0.7
   startOffset: {x: -0.3, y: 0.01, z: -0.3}
   standSlots: []
 --- !u!4 &1476133343
@@ -1142,7 +1160,7 @@ Transform:
   m_GameObject: {fileID: 1476133341}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 12.06, y: 2.7, z: 13.82}
+  m_LocalPosition: {x: 10.7, y: 2.7, z: 12.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1429,7 +1447,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6224529372463993787, guid: e6d917f85d8ec034899dee92eb9e6205, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 910566142}
   m_SourcePrefab: {fileID: 100100000, guid: e6d917f85d8ec034899dee92eb9e6205, type: 3}
 --- !u!1001 &8737181764162552463
 PrefabInstance:
@@ -1527,6 +1548,14 @@ PrefabInstance:
       propertyPath: 'camerasToShake.Array.data[1]'
       value: 
       objectReference: {fileID: 261892502}
+    - target: {fileID: 7553071316654823320, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
+      propertyPath: blueCapsulePrefab
+      value: 
+      objectReference: {fileID: 6523888450084421792, guid: 1297894fd3a60bf478e763bf092632b4, type: 3}
+    - target: {fileID: 7553071316654823320, guid: fd5a5436e2e8e1b4298fcb478c31bd75, type: 3}
+      propertyPath: yellowCapsulePrefab
+      value: 
+      objectReference: {fileID: 2992535533024171026, guid: 0cd484069cd327a4087194f9d207932b, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class StageCapsuleManager : MonoBehaviour
 {
+    public static StageCapsuleManager Instance;
+
     [Header("Capsule Prefabs")]
     [SerializeField] private GameObject blueCapsulePrefab;
     [SerializeField] private GameObject yellowCapsulePrefab;
@@ -17,15 +19,19 @@ public class StageCapsuleManager : MonoBehaviour
     [SerializeField] private int blueCount = 10;
     [SerializeField] private int yellowCount = 10;
 
+    void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
     private void Start()
     {
-        // 스테이지 시작 시 공 무작위 배치 실행
         GenerateStageCapsules();
     }
 
     public void GenerateStageCapsules()
     {
-        // 기존에 남아있는 공이 있다면 제거 (재시작 대비)
         ClearExistingCapsules();
 
         // 1. 노란 공(짝수: 0,2,4,6,8) 각 2개씩 총 10개 풀 생성 및 셔플
@@ -36,13 +42,13 @@ public class StageCapsuleManager : MonoBehaviour
         List<int> blueNumbers = new List<int> { 1, 1, 3, 3, 5, 5, 7, 7, 9, 9 };
         ShuffleList(blueNumbers);
 
-        // 3. 공 프리팹 리스트 구성 (어떤 공이 스폰될지 순서 셔플)
+        // 3. 공 프리팹 리스트 구성 (순서 셔플)
         List<GameObject> capsulePrefabList = new List<GameObject>();
         for (int i = 0; i < blueCount; i++) capsulePrefabList.Add(blueCapsulePrefab);
         for (int i = 0; i < yellowCount; i++) capsulePrefabList.Add(yellowCapsulePrefab);
         ShuffleList(capsulePrefabList);
 
-        // 4. 약간의 위치 오프셋을 주며 순간적으로 연속 생성 및 숫자 데이터 주입
+        // 4. 연속 생성 및 숫자 데이터 주입
         StartCoroutine(SpawnRoutine(capsulePrefabList, yellowNumbers, blueNumbers));
     }
 
@@ -54,18 +60,15 @@ public class StageCapsuleManager : MonoBehaviour
 
         foreach (GameObject prefab in prefabList)
         {
-            // 공이 스폰될 때마다 Y축 높이를 조금씩 올려서 위에서 순차적으로 떨어지게 함
             Vector3 randomOffset = new Vector3(
                 Random.Range(-spawnRadius, spawnRadius),
-                spawnIndex * 0.15f, // 높이에 차등을 주어 겹침 방지
+                spawnIndex * 0.15f,
                 Random.Range(-spawnRadius, spawnRadius)
             );
 
             Quaternion randomRotation = Random.rotation;
-
             GameObject capsuleObj = Instantiate(prefab, spawnPoint.position + randomOffset, randomRotation, transform);
 
-            // 5. 생성된 공에 정확한 중복 없는 숫자 데이터 주입
             CapsuleData capsuleData = capsuleObj.GetComponent<CapsuleData>();
             if (capsuleData != null)
             {
@@ -91,9 +94,6 @@ public class StageCapsuleManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 리스트를 무작위로 섞는 함수 (Fisher-Yates Shuffle)
-    /// </summary>
     private void ShuffleList<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
@@ -110,15 +110,6 @@ public class StageCapsuleManager : MonoBehaviour
         foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
-        }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (spawnPoint != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(spawnPoint.position, spawnRadius);
         }
     }
 }

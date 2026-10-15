@@ -19,7 +19,6 @@ public class CapsuleOpen : MonoBehaviour
         capsuleNumber = num;
         isInteracted = false;
 
-        // 공이 다시 세팅될 때 렌더러와 콜라이더 복구
         MeshRenderer mr = GetComponent<MeshRenderer>();
         if (mr != null) mr.enabled = true;
         Collider col = GetComponent<Collider>();
@@ -34,7 +33,6 @@ public class CapsuleOpen : MonoBehaviour
 
         if (timeSinceLastClick <= doubleClickThreshold)
         {
-            // ★ 더블클릭 성공! 흔들림 + 사라짐 + 빨간색 숫자 팝업
             isInteracted = true;
             StartCoroutine(ShakeAndDisappearRoutine());
             lastClickTime = 0f;
@@ -78,13 +76,12 @@ public class CapsuleOpen : MonoBehaviour
 
         ballTransform.localScale = Vector3.zero;
 
-        // 공의 렌더러와 콜라이더 끄기
         MeshRenderer mr = GetComponent<MeshRenderer>();
         if (mr != null) mr.enabled = false;
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
 
-        // 3. 선명한 빨간색 숫자 팝업 생성 (사라지지 않고 영구 유지)
+        // 3. 선명한 빨간색 숫자 팝업 생성
         TriggerRedNumberPopup(ballTransform.position);
     }
 
@@ -97,14 +94,17 @@ public class CapsuleOpen : MonoBehaviour
 
         TextMeshPro tmp = textObj.AddComponent<TextMeshPro>();
         tmp.text = capsuleNumber.ToString();
-        tmp.fontSize = 5; // 숫자가 적당히 보이도록 설정
+        tmp.fontSize = 5;
         tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.red; // 무조건 선명한 빨간색
+        tmp.color = Color.red;
 
         if (Camera.main != null)
         {
             textObj.transform.rotation = Camera.main.transform.rotation;
         }
+
+        // ★ 새로 만든 드래그 및 정답 체크 스크립트 자동 부착
+        textObj.AddComponent<DraggableNumberToText>();
 
         StartCoroutine(PopupAnimationRoutine(textObj));
     }
@@ -117,7 +117,6 @@ public class CapsuleOpen : MonoBehaviour
 
         targetObj.transform.localScale = startScale;
 
-        // 텍스트가 뿅 커지는 연출만 수행하고 끝 (Destroy 없음)
         while (elapsed < 0.25f)
         {
             elapsed += Time.deltaTime;

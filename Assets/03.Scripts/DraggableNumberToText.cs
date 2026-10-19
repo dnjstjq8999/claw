@@ -7,16 +7,13 @@ public class DraggableNumberToText : MonoBehaviour
     private bool isDragging = false;
     private Camera mainCamera;
     private Plane targetPlane;
-    public Vector3 originalPosition; // 원래 생성된 자리
+    public Vector3 originalPosition;
     public int myNumber;
-
-    [Header("드롭 감지 설정")]
-    public float dropThreshold = 0.8f;
 
     void Start()
     {
         mainCamera = Camera.main;
-        originalPosition = transform.position; // 처음 생성된 위치 저장
+        originalPosition = transform.position;
 
         TextMeshPro tmp = GetComponent<TextMeshPro>();
         if (tmp != null)
@@ -32,11 +29,7 @@ public class DraggableNumberToText : MonoBehaviour
             boxCol = gameObject.AddComponent<BoxCollider>();
         }
 
-        // 클릭하기 편하게 박스 크기 확장
         boxCol.size = new Vector3(1.5f, 1.5f, 0.2f);
-
-        // ★ [핵심 해결 방법] 콜라이더를 트리거로 설정! 
-        // 물리적 충돌은 무시하고, 마우스 클릭만 감지하게 만듭니다.
         boxCol.isTrigger = true;
     }
 
@@ -85,14 +78,9 @@ public class DraggableNumberToText : MonoBehaviour
             Vector3 paperPos = MathProblemPaper.Instance.transform.position;
             float distance = Vector3.Distance(new Vector3(transform.position.x, paperPos.y, transform.position.z), paperPos);
 
-            if (distance < dropThreshold || transform.position.x < paperPos.x + 0.5f)
+            if (distance < 1.0f) // 넉넉한 기본 인식 거리
             {
-                Debug.Log($"★ 종이에 숫자 {myNumber}를 장착했습니다.");
-
-                // 종이에 넣으면서 자신의 원래 위치(originalPosition)를 MathProblemPaper에 함께 전달
                 MathProblemPaper.Instance.SetPlayerAnswer(myNumber, originalPosition);
-
-                // 드래그하던 빨간 숫자 오브젝트 파괴
                 Destroy(gameObject);
                 return;
             }

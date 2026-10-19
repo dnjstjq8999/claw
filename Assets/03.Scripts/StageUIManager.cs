@@ -102,7 +102,7 @@ public class StageUIManager : MonoBehaviour
         tmpText.fontSize = 24;
         tmpText.color = Color.white;
         tmpText.alignment = TextAlignmentOptions.Left;
-        tmpText.enableWordWrapping = false;
+        tmpText.textWrappingMode = TextWrappingModes.NoWrap;
 
         return tmpText;
     }

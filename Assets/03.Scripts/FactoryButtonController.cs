@@ -1,111 +1,113 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 using System.Collections;
 
 public class FactoryButtonController : MonoBehaviour
 {
-    [Header("버튼 부품 연결")]
-    [Tooltip("누를 때 움직일 빨간색 윗부분 오브젝트 (buttonredtop-1)를 여기에 드래그 해주세요.")]
-    public Transform buttonTop;
+    [Header("버튼 움직임 설정")]
+    [Tooltip("안으로 들어갈 빨간색 버튼 윗부분 (buttonredtop-1)")]
+    [SerializeField] private Transform buttonTop;
 
-    [Header("움직임 설정")]
-    public float pressDepth = 0.05f; // 들어가는 깊이
-    public float moveSpeed = 15f;    // 움직이는 속도
+    [Header("조절 가능한 버튼 깊이 & 속도")]
+    [SerializeField] private float pressDepth = 0.15f;
+    [SerializeField] private float moveSpeed = 20f;
+
+    [Header("상호작용 설정")]
+    [SerializeField] private float interactionDistance = 3.0f;
+
+    [Header("버튼 전용 UI 텍스트 연동")]
+    [SerializeField] private GameObject factoryPromptUI;
 
     private Vector3 initialLocalPos;
     private bool isPressed = false;
-    private Camera mainCamera;
 
     void Start()
     {
-        mainCamera = Camera.main;
-
-        // 버튼 탑이 지정되지 않았다면 자식 오브젝트 중에서 'buttonredtop-1'을 이름으로 자동 찾기
-        if (buttonTop == null)
-        {
-            Transform found = transform.Find("339c2c49a714400887ae6fba0c7ae19f/RootNode/buttonredtop-1"); // 경로에 맞춰 찾기
-            if (found == null)
-            {
-                // 혹은 이름으로 검색
-                foreach (Transform child in GetComponentsInChildren<Transform>())
-                {
-                    if (child.name.Contains("buttonredtop"))
-                    {
-                        buttonTop = child;
-                        break;
-                    }
-                }
-            }
-        }
-
         if (buttonTop != null)
         {
             initialLocalPos = buttonTop.localPosition;
         }
 
-        // 전체 모델이나 루트에 클릭을 감지할 콜라이더가 없다면 BoxCollider 추가
-        if (GetComponent<Collider>() == null)
+        if (factoryPromptUI != null)
         {
-            BoxCollider col = gameObject.AddComponent<BoxCollider>();
-            col.size = new Vector3(0.3f, 0.3f, 0.3f);
-            col.isTrigger = true;
+            factoryPromptUI.SetActive(false);
         }
     }
 
     void Update()
     {
-        if (Mouse.current == null || buttonTop == null) return;
+        if (Camera.main == null || isPressed) return;
 
-        // 마우스 클릭 시 버튼을 눌렀는지 체크
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+        RaycastHit hit;
+        bool isLookingAtButton = false;
+
+        if (Physics.Raycast(ray, out hit, interactionDistance))
         {
-            Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
+            if (hit.collider.transform.IsChildOf(transform))
             {
-                // 클릭한 오브젝트가 이 버튼이거나, 버튼의 자식(빨간 윗부분 등)인 경우
-                if (hit.transform == transform || hit.transform.IsChildOf(transform))
+                isLookingAtButton = true;
+
+                if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
                 {
                     StartCoroutine(PressButtonRoutine());
                 }
             }
         }
+
+        if (factoryPromptUI != null)
+        {
+            factoryPromptUI.SetActive(isLookingAtButton);
+        }
     }
 
     private IEnumerator PressButtonRoutine()
     {
-        if (isPressed) yield break;
         isPressed = true;
 
-        // 1. 채점 기능 실행! (아까 만든 MathProblemPaper의 제출 버튼 함수 호출)
+        if (factoryPromptUI != null)
+        {
+            factoryPromptUI.SetActive(false);
+        }
+
+        // [핵심] X축 방향으로 누르는 연출입니다.
+        // 만약 이 상태에서 바깥(오른쪽)으로 튀어나온다면, 아래의 '+ pressDepth'를 '- pressDepth'로 바꿔주세요!
+        if (buttonTop != null)
+        {
+            Vector3 targetPos = initialLocalPos + new Vector3(pressDepth, 0, 0);
+
+            float elapsed = 0f;
+            while (elapsed < 0.12f)
+            {
+                elapsed += Time.deltaTime;
+                buttonTop.localPosition = Vector3.Lerp(buttonTop.localPosition, targetPos, elapsed * moveSpeed);
+                yield return null;
+            }
+            buttonTop.localPosition = targetPos;
+        }
+
+        // 채점 및 결과 처리 호출
         if (MathProblemPaper.Instance != null)
         {
             MathProblemPaper.Instance.OnSubmitButtonClicked();
         }
 
-        // 2. 버튼이 쑥 들어가는 연출 (로컬 좌표 기준 안쪽으로 이동)
-        // (보통 로컬 Z축이나 Y축 방향이 누르는 방향이므로 상황에 맞게 조절 필요, 여기서는 Z축 기준 예시)
-        Vector3 pressedLocalPos = initialLocalPos - new Vector3(0, 0, pressDepth);
+        yield return new WaitForSeconds(0.15f);
 
-        float elapsed = 0f;
-        while (elapsed < 0.1f)
+        // 원래 자리로 복구
+        if (buttonTop != null)
         {
-            elapsed += Time.deltaTime;
-            buttonTop.localPosition = Vector3.Lerp(buttonTop.localPosition, pressedLocalPos, elapsed * moveSpeed);
-            yield return null;
+            float elapsed = 0f;
+            while (elapsed < 0.12f)
+            {
+                elapsed += Time.deltaTime;
+                buttonTop.localPosition = Vector3.Lerp(buttonTop.localPosition, initialLocalPos, elapsed * moveSpeed);
+                yield return null;
+            }
+            buttonTop.localPosition = initialLocalPos;
         }
 
-        // 3. 다시 원래 자리로 튀어나오는 연출
-        elapsed = 0f;
-        while (elapsed < 0.1f)
-        {
-            elapsed += Time.deltaTime;
-            buttonTop.localPosition = Vector3.Lerp(buttonTop.localPosition, initialLocalPos, elapsed * moveSpeed);
-            yield return null;
-        }
-
-        buttonTop.localPosition = initialLocalPos;
         isPressed = false;
     }
 }

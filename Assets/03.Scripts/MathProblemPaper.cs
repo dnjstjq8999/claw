@@ -1,5 +1,8 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
 
 public class MathProblemPaper : MonoBehaviour
@@ -7,17 +10,25 @@ public class MathProblemPaper : MonoBehaviour
     public static MathProblemPaper Instance;
 
     [Header("UI Reference")]
-    [Tooltip("테이블 위 종이에 문제를 표시할 텍스트 컴포넌트")]
     [SerializeField] private TextMeshProUGUI problemText;
+
+    [Header("결과 팝업 UI 패널 설정")]
+    public GameObject resultUIPanel;
+    public TextMeshProUGUI resultMessageText;
+    public Button nextStageButton;
+    public Button mainMenuButton;
+
+    [Header("종이 위 마크 (동그라미 / 빗금)")]
+    public GameObject circleMarkObj;
+    public GameObject crossMarkObj;
 
     [Header("Current Problem Data")]
     public int operand1;
     public int operand2;
     public int correctAnswer;
 
-    // 플레이어가 드래그해서 넣은 임시 답안과 그때의 원래 위치 정보
     private int? currentPlayerAnswer = null;
-    private Vector3 lastOriginalPosition; // 이전에 넣었던 숫자의 원래 자리
+    private Vector3 lastOriginalPosition;
 
     private struct ProblemPair
     {
@@ -38,13 +49,16 @@ public class MathProblemPaper : MonoBehaviour
 
     void Start()
     {
+        if (resultUIPanel != null) resultUIPanel.SetActive(false);
+        if (circleMarkObj != null) circleMarkObj.SetActive(false);
+        if (crossMarkObj != null) crossMarkObj.SetActive(false);
+
         GenerateNewProblem();
     }
 
     private void InitializeValidProblems()
     {
         validProblems.Clear();
-
         for (int i = 1; i <= 9; i++)
         {
             for (int j = 1; j <= 9; j++)
@@ -69,37 +83,34 @@ public class MathProblemPaper : MonoBehaviour
         correctAnswer = operand1 * operand2;
 
         currentPlayerAnswer = null;
-        UpdateProblemUI();
 
-        Debug.Log($"[스테이지 1 문제 출제] {operand1} × {operand2} = ? (정답: {correctAnswer})");
+        if (resultUIPanel != null) resultUIPanel.SetActive(false);
+        if (circleMarkObj != null) circleMarkObj.SetActive(false);
+        if (crossMarkObj != null) crossMarkObj.SetActive(false);
+
+        // 새 문제 출제 시 게임 플레이 상태로 복구 (시점 이동 켜기)
+        SetGamePlayState(true);
+
+        UpdateProblemUI();
     }
 
-    /// <summary>
-    /// 숫자를 종이에 놓았을 때 호출 (원래 위치 정보도 함께 받음)
-    /// </summary>
     public void SetPlayerAnswer(int answer, Vector3 spawnPosition)
     {
-        // 만약 이미 다른 숫자가 들어가 있었다면, 그 숫자를 '원래 있던 자리'로 되돌려 보냄
         if (currentPlayerAnswer.HasValue)
         {
             int oldAnswer = currentPlayerAnswer.Value;
             SpawnReturnedNumber(oldAnswer, lastOriginalPosition);
-            Debug.Log($"[숫자 교체] 기존에 있던 {oldAnswer}가 원래 자리로 돌아갑니다.");
         }
 
         currentPlayerAnswer = answer;
-        lastOriginalPosition = spawnPosition; // 이번에 넣은 숫자의 원래 위치를 백업해 둠
+        lastOriginalPosition = spawnPosition;
         UpdateProblemUI();
-        Debug.Log($"[답안 임시 입력] {answer}");
     }
 
-    /// <summary>
-    /// 교체되어 빠져나온 숫자를 본래의 캡슐 위치로 되돌려주는 함수
-    /// </summary>
     private void SpawnReturnedNumber(int numberValue, Vector3 returnPos)
     {
         GameObject textObj = new GameObject("ReturnedNumber");
-        textObj.transform.position = returnPos; // 정확히 처음에 튀어나왔던 그 위치로 설정!
+        textObj.transform.position = returnPos;
 
         TextMeshPro tmp = textObj.AddComponent<TextMeshPro>();
         tmp.text = numberValue.ToString();
@@ -112,9 +123,8 @@ public class MathProblemPaper : MonoBehaviour
             textObj.transform.rotation = Camera.main.transform.rotation;
         }
 
-        // 다시 드래그할 수 있도록 컴포넌트 부착
         DraggableNumberToText draggable = textObj.AddComponent<DraggableNumberToText>();
-        draggable.originalPosition = returnPos; // 원래 자리 지정
+        draggable.originalPosition = returnPos;
     }
 
     private void UpdateProblemUI()
@@ -124,6 +134,21 @@ public class MathProblemPaper : MonoBehaviour
             string answerStr = currentPlayerAnswer.HasValue ? $"<color=red>{currentPlayerAnswer.Value}</color>" : "?";
             problemText.text = $"{operand1} × {operand2} = {answerStr}";
         }
+    }
+
+    public bool TryDropNumber(Vector3 dropPosition, int number, Vector3 spawnPos)
+    {
+        Vector3 paperPos = transform.position;
+        float distX = dropPosition.x - paperPos.x;
+        float distZ = dropPosition.z - paperPos.z;
+
+        if (Mathf.Abs(distX) < 0.8f && Mathf.Abs(distZ) < 0.6f)
+        {
+            SetPlayerAnswer(number, spawnPos);
+            return true;
+        }
+
+        return false;
     }
 
     public void OnSubmitButtonClicked()
@@ -139,13 +164,106 @@ public class MathProblemPaper : MonoBehaviour
 
     public void CheckAnswer(int playerAnswer)
     {
-        if (playerAnswer == correctAnswer)
+        if (resultUIPanel != null) resultUIPanel.SetActive(false);
+
+        bool isCorrect = (playerAnswer == correctAnswer);
+
+        if (isCorrect)
         {
-            Debug.Log("<color=green>[정답!]</color> 축하합니다! 정답입니다.");
+            if (crossMarkObj != null) crossMarkObj.SetActive(false);
+            if (circleMarkObj != null) StartCoroutine(PlayMarkAnimationAndShowUI(circleMarkObj, true));
         }
         else
         {
-            Debug.Log("<color=red>[오답]</color> 다시 시도해보세요.");
+            if (circleMarkObj != null) circleMarkObj.SetActive(false);
+            if (crossMarkObj != null) StartCoroutine(PlayMarkAnimationAndShowUI(crossMarkObj, false));
         }
+    }
+
+    /// <summary>
+    /// 종이 위에 O/X 연출을 먼저 보여준 뒤, 결과 UI를 띄우는 코루틴 (애니메이션 스케일 보완)
+    /// </summary>
+    private IEnumerator PlayMarkAnimationAndShowUI(GameObject targetMark, bool isCorrect)
+    {
+        targetMark.SetActive(true);
+        Transform markTransform = targetMark.transform;
+
+        // [중요] 오브젝트 원래의 스케일을 기억해 둡니다 (유니티 인스펙터에서 설정한 크기 유지)
+        Vector3 originalScale = markTransform.localScale;
+
+        float duration = 0.3f;
+        float elapsed = 0f;
+
+        Vector3 startScale = Vector3.zero;
+        markTransform.localScale = startScale;
+
+        // 1. O 또는 X 마크가 0에서 원래 크기(originalScale)로 팡 커지는 연출 재생
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            // 부드러운 연출을 위해 서서히 커지게 설정
+            markTransform.localScale = Vector3.Lerp(startScale, originalScale, t);
+            yield return null;
+        }
+        markTransform.localScale = originalScale;
+
+        // 2. 연출이 끝난 후 0.4초 대기
+        yield return new WaitForSeconds(0.4f);
+
+        // 3. 결과 UI 활성화 및 텍스트/버튼 설정
+        if (resultUIPanel != null) resultUIPanel.SetActive(true);
+
+        if (isCorrect)
+        {
+            if (resultMessageText != null) resultMessageText.text = "CLEAR!";
+            if (nextStageButton != null) nextStageButton.gameObject.SetActive(true);
+            if (mainMenuButton != null) mainMenuButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            if (resultMessageText != null) resultMessageText.text = "FAIL!";
+            if (nextStageButton != null) nextStageButton.gameObject.SetActive(false);
+            if (mainMenuButton != null) mainMenuButton.gameObject.SetActive(true);
+        }
+
+        // 4. 결과 UI가 떴으므로 캐릭터 시점 회전 정지 및 마우스 해제
+        SetGamePlayState(false);
+    }
+
+    /// <summary>
+    /// 게임 플레이 중일 때는 시점 회전을 켜고, 결과 UI가 떴을 때는 시점 회전을 끄는 함수
+    /// </summary>
+    private void SetGamePlayState(bool isPlaying)
+    {
+        if (isPlaying)
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+
+            // 플레이어 시점 이동 스크립트 활성화 (사용 중이신 스크립트 이름으로 켜기)
+            // 예시: PlayerController 또는 MouseLook 컴포넌트 찾아서 켜주기
+            var playerScript = FindFirstObjectByType<PlayerController>();
+            if (playerScript != null) playerScript.enabled = true;
+        }
+        else
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+
+            // 플레이어 시점 이동 스크립트 비활성화
+            var playerScript = FindFirstObjectByType<PlayerController>();
+            if (playerScript != null) playerScript.enabled = false;
+        }
+    }
+
+    public void OnClickNextStage()
+    {
+        GenerateNewProblem();
+    }
+
+    public void OnClickMainMenu()
+    {
+        Debug.Log("메인 메뉴로 이동!");
     }
 }

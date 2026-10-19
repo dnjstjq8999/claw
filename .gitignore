@@ -73,3 +73,13 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# 유니티 외부 에셋 무시
+/Assets/Little Astronaut/
+/Assets/Little Astronaut.meta
+/Assets/SCI-FI UI Pack Pro/
+/Assets/SCI-FI UI Pack Pro.meta
+/Assets/Tiny Giant Studio/
+/Assets/Tiny Giant Studio.meta
+/Assets/Plugins/Tiny Giant Studio/
+/Assets/Plugins/Tiny Giant Studio.meta

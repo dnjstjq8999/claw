@@ -78,7 +78,7 @@ public class DraggableNumberToText : MonoBehaviour
             Vector3 paperPos = MathProblemPaper.Instance.transform.position;
             float distance = Vector3.Distance(new Vector3(transform.position.x, paperPos.y, transform.position.z), paperPos);
 
-            if (distance < 1.0f) // ³Ë³ËÇÑ ±âº» ÀÎ½Ä °Å¸®
+            if (distance < 1.0f)
             {
                 MathProblemPaper.Instance.SetPlayerAnswer(myNumber, originalPosition);
                 Destroy(gameObject);

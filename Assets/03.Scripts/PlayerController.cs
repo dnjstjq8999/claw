@@ -2,10 +2,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Attached To: Player 오브젝트
-/// 역할: 화면 중앙 에임점 중심 완벽 동기화 마우스 Look 및 WASD 이동
-/// </summary>
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
@@ -21,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     private CharacterController controller;
     private Vector3 velocity;
-    private float xRotation = 0f; // 카메라 상하 각도
+    private float xRotation = 0f;
 
     public bool canMove = true;
 
@@ -29,13 +25,11 @@ public class PlayerController : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
 
-        // 시작 시 커서를 화면 중앙에 완벽 고정 및 숨김
         LockCursor(true);
     }
 
     void Update()
     {
-        // 플레이어가 이동/시점 조작 상태인데 커서가 풀려있다면 강제로 다시 잠금
         if (canMove && Cursor.lockState != CursorLockMode.Locked)
         {
             LockCursor(true);
@@ -72,9 +66,6 @@ public class PlayerController : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    /// <summary>
-    /// 마우스 이동과 카메라/플레이어 회전을 1:1로 정확히 동기화
-    /// </summary>
     private void HandleMouseLook()
     {
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
@@ -82,7 +73,6 @@ public class PlayerController : MonoBehaviour
         float mouseX = mouseDelta.x * mouseSensitivity * 0.1f;
         float mouseY = mouseDelta.y * mouseSensitivity * 0.1f;
 
-        // 카메라 상하 회전 (X축)
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, minVerticalAngle, maxVerticalAngle);
 
@@ -91,25 +81,19 @@ public class PlayerController : MonoBehaviour
             playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         }
 
-        // 플레이어 몸통 좌우 회전 (Y축)
         transform.Rotate(Vector3.up * mouseX);
     }
 
-    /// <summary>
-    /// 마우스 커서 잠금/해제 제어
-    /// </summary>
     public void SetControllable(bool controllable)
     {
         canMove = controllable;
 
         if (!controllable)
         {
-            // 조작 차단 시 커서 해제 (기계 방향키 조작 편의를 위해)
             LockCursor(false);
         }
         else
         {
-            // 조작 복귀 시 커서 다시 잠금
             LockCursor(true);
         }
     }

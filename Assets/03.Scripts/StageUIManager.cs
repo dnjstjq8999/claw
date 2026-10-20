@@ -31,7 +31,6 @@ public class StageUIManager : MonoBehaviour
 
     private void CreateCapsuleUI()
     {
-        // ★ 수정 포인트: 겹침 방지를 위해 World Space가 아닌 화면 전용 Overlay 캔버스를 안전하게 탐색 또는 생성
         Canvas targetCanvas = null;
         foreach (Canvas c in Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None))
         {
@@ -42,7 +41,6 @@ public class StageUIManager : MonoBehaviour
             }
         }
 
-        // 만약 화면 전용 캔버스가 없다면 새로 생성
         if (targetCanvas == null)
         {
             GameObject canvasObj = new GameObject("StageUI_Canvas");
@@ -81,7 +79,6 @@ public class StageUIManager : MonoBehaviour
         hLayout.spacing = 4;
         hLayout.childAlignment = TextAnchor.MiddleLeft;
 
-        // 아이콘 이미지 오브젝트
         GameObject iconObj = new GameObject("Icon");
         iconObj.transform.SetParent(rowObj.transform, false);
         RectTransform iconRect = iconObj.AddComponent<RectTransform>();
@@ -93,7 +90,6 @@ public class StageUIManager : MonoBehaviour
 
         iconImage.preserveAspect = true;
 
-        // 개수 텍스트 오브젝트
         GameObject textObj = new GameObject("CountText");
         textObj.transform.SetParent(rowObj.transform, false);
         RectTransform textRect = textObj.AddComponent<RectTransform>();

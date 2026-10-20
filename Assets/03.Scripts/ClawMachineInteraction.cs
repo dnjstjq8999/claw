@@ -1,32 +1,28 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Attached To: ClawMachine 오브젝트
-/// 역할: 손잡이 에임 감지, 인형뽑기 시작/종료 처리, 카메라 시점 전환 및 기계 조작권 이전
-/// </summary>
+
 public class ClawMachineInteraction : MonoBehaviour
 {
     [Header("카메라 설정")]
-    public Camera characterCamera;      // 플레이어 메인 카메라
-    public GameObject frontCamera;      // 인형뽑기 정면 카메라
-    public GameObject sideCamera;       // 인형뽑기 측면 카메라
-
+    public Camera characterCamera;
+    public GameObject frontCamera;
+    public GameObject sideCamera;
     [Header("플레이어 및 기계 스크립트 참조")]
-    public PlayerController playerController;     // 플레이어 조작 스크립트
-    public ClawMachineController clawMachineController; // 집게 이동/다운 조작 스크립트
+    public PlayerController playerController;
+    public ClawMachineController clawMachineController;
 
     [Header("UI 설정")]
-    public GameObject interactionUI;    // [E] 상호작용 UI
-    public GameObject crosshairUI;      // 화면 중앙 에임점 UI
+    public GameObject interactionUI;
+    public GameObject crosshairUI;
 
     [Header("Aim 조준 상호작용 설정")]
-    public Transform handleTransform;   // 조준 대상 (손잡이 Transform)
-    public float interactDistance = 3.0f; // 최대 감지 거리
-    public LayerMask handleLayer;       // 손잡이 레이어
+    public Transform handleTransform;
+    public float interactDistance = 3.0f;
+    public LayerMask handleLayer;
 
-    private bool isAimingHandle = false; // 현재 손잡이를 바라보는 중인지
-    private bool isPlaying = false;      // 인형뽑기 진행 중인지
+    private bool isAimingHandle = false;
+    private bool isPlaying = false;
 
     private void Start()
     {
@@ -77,12 +73,10 @@ public class ClawMachineInteraction : MonoBehaviour
         {
             bool isHandle = false;
 
-            // 1. 인스펙터에 지정된 handleTransform과 직접 일치하는지 우선 검사 (가장 안전)
             if (handleTransform != null && hit.transform == handleTransform)
             {
                 isHandle = true;
             }
-            // 2. 오브젝트 이름 또는 CompareTag 예외 안전 검사
             else if (hit.collider.gameObject.name.Contains("InteractionTrigger") || hit.collider.gameObject.name.Contains("Handle"))
             {
                 isHandle = true;
@@ -114,20 +108,17 @@ public class ClawMachineInteraction : MonoBehaviour
         if (interactionUI != null) interactionUI.SetActive(false);
         if (crosshairUI != null) crosshairUI.SetActive(false);
 
-        // 플레이어 제어 비활성화 및 커서 풀기
         if (playerController != null)
         {
             playerController.enabled = false;
             playerController.LockCursor(false);
         }
 
-        // 인형뽑기 집게 조작 스크립트 활성화
         if (clawMachineController != null)
         {
             clawMachineController.enabled = true;
         }
 
-        // 정면 카메라로 시점 전환
         if (characterCamera != null) characterCamera.gameObject.SetActive(false);
         if (frontCamera != null) frontCamera.SetActive(true);
         if (sideCamera != null) sideCamera.SetActive(false);
@@ -143,13 +134,11 @@ public class ClawMachineInteraction : MonoBehaviour
 
         if (crosshairUI != null) crosshairUI.SetActive(true);
 
-        // 인형뽑기 기계 조작 비활성화
         if (clawMachineController != null)
         {
             clawMachineController.enabled = false;
         }
 
-        // 플레이어 제어권 다시 복구
         if (playerController != null)
         {
             playerController.enabled = true;

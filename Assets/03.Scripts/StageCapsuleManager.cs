@@ -11,7 +11,6 @@ public class StageCapsuleManager : MonoBehaviour
     [SerializeField] private GameObject yellowCapsulePrefab;
 
     [Header("Spawn Settings")]
-    [Tooltip("공이 떨어질 시작 위치 (인형뽑기 통 내부 상공)")]
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private float spawnRadius = 0.5f;
 
@@ -34,21 +33,21 @@ public class StageCapsuleManager : MonoBehaviour
     {
         ClearExistingCapsules();
 
-        // 1. 노란 공(짝수: 0,2,4,6,8) 각 2개씩 총 10개 풀 생성 및 셔플
+        // 노란 공(짝수: 0,2,4,6,8) 각 2개씩 총 10개 풀 생성 및 셔플
         List<int> yellowNumbers = new List<int> { 0, 0, 2, 2, 4, 4, 6, 6, 8, 8 };
         ShuffleList(yellowNumbers);
 
-        // 2. 파란 공(홀수: 1,3,5,7,9) 각 2개씩 총 10개 풀 생성 및 셔플
+        // 파란 공(홀수: 1,3,5,7,9) 각 2개씩 총 10개 풀 생성 및 셔플
         List<int> blueNumbers = new List<int> { 1, 1, 3, 3, 5, 5, 7, 7, 9, 9 };
         ShuffleList(blueNumbers);
 
-        // 3. 공 프리팹 리스트 구성 (순서 셔플)
+        // 공 프리팹 리스트 구성 (순서 셔플)
         List<GameObject> capsulePrefabList = new List<GameObject>();
         for (int i = 0; i < blueCount; i++) capsulePrefabList.Add(blueCapsulePrefab);
         for (int i = 0; i < yellowCount; i++) capsulePrefabList.Add(yellowCapsulePrefab);
         ShuffleList(capsulePrefabList);
 
-        // 4. 연속 생성 및 숫자 데이터 주입
+        // 연속 생성 및 숫자 데이터 주입
         StartCoroutine(SpawnRoutine(capsulePrefabList, yellowNumbers, blueNumbers));
     }
 

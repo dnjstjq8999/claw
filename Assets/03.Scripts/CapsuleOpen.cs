@@ -51,7 +51,6 @@ public class CapsuleOpen : MonoBehaviour
         float shakeDuration = 0.4f;
         float elapsed = 0f;
 
-        // 1. 좌우 흔들림 연출
         while (elapsed < shakeDuration)
         {
             elapsed += Time.deltaTime;
@@ -61,7 +60,6 @@ public class CapsuleOpen : MonoBehaviour
         }
         ballTransform.localPosition = originalPos;
 
-        // 2. 서서히 작아지며 사라지는 연출
         float shrinkDuration = 0.3f;
         elapsed = 0f;
         Vector3 startScale = ballTransform.localScale;
@@ -81,7 +79,6 @@ public class CapsuleOpen : MonoBehaviour
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
 
-        // 3. 선명한 빨간색 숫자 팝업 생성
         TriggerRedNumberPopup(ballTransform.position);
     }
 
@@ -103,7 +100,6 @@ public class CapsuleOpen : MonoBehaviour
             textObj.transform.rotation = Camera.main.transform.rotation;
         }
 
-        // ★ 새로 만든 드래그 및 정답 체크 스크립트 자동 부착
         textObj.AddComponent<DraggableNumberToText>();
 
         StartCoroutine(PopupAnimationRoutine(textObj));

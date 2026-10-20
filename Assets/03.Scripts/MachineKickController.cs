@@ -2,20 +2,12 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Attached To: ClawMachine 오브젝트
-/// 역할: [Z] 키 입력 시 기계 내부의 공들에게 쿵! 하고 직관적인 물리 충격을 가함
-/// </summary>
 public class MachineKickController : MonoBehaviour
 {
     [Header("--- 충격 물리 설정 ---")]
-    [Tooltip("충격파가 터질 중심점 (InteractionTrigger 위치 또는 기계 바닥)")]
     public Transform kickCenter;
-    [Tooltip("충격파 감지 범위")]
     public float kickRadius = 5.0f;
-    [Tooltip("발로 차는 힘의 크기")]
     public float kickForce = 15.0f;
-    [Tooltip("위로 튀어오르는 힘의 비율")]
     public float upwardModifier = 2.0f;
 
     [Header("--- 카메라 셰이크 ---")]
@@ -61,10 +53,9 @@ public class MachineKickController : MonoBehaviour
             Rigidbody rb = hit.GetComponentInParent<Rigidbody>();
             if (rb == null) rb = hit.GetComponent<Rigidbody>();
 
-            // Rigidbody가 부착되어 있고 IsKinematic이 꺼진 공들만 충격 가하기
             if (rb != null && !rb.isKinematic)
             {
-                rb.WakeUp(); // 물리 엔진 깨우기
+                rb.WakeUp();
                 rb.AddExplosionForce(kickForce, centerPosition, kickRadius, upwardModifier, ForceMode.Impulse);
                 movedCount++;
             }

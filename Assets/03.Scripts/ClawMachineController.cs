@@ -106,7 +106,6 @@ public class ClawMachineController : MonoBehaviour
         newPos.x = Mathf.Clamp(newPos.x, minBounds.x, maxBounds.x);
         newPos.z = Mathf.Clamp(newPos.z, minBounds.y, maxBounds.y);
 
-        // 빠른 수평 이동을 위해 Transform 위치 직접 변경
         carriageTransform.position = newPos;
 
         if (railTransform != null)
@@ -187,7 +186,6 @@ public class ClawMachineController : MonoBehaviour
                 railTransform.position = railPos;
             }
 
-            // 프레임 대기 대신 물리 주기 대기!
             yield return new WaitForFixedUpdate();
         }
 

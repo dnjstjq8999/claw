@@ -88,7 +88,6 @@ public class MathProblemPaper : MonoBehaviour
         if (circleMarkObj != null) circleMarkObj.SetActive(false);
         if (crossMarkObj != null) crossMarkObj.SetActive(false);
 
-        // 새 문제 출제 시 게임 플레이 상태로 복구 (시점 이동 켜기)
         SetGamePlayState(true);
 
         UpdateProblemUI();
@@ -155,7 +154,6 @@ public class MathProblemPaper : MonoBehaviour
     {
         if (!currentPlayerAnswer.HasValue)
         {
-            Debug.Log("<color=yellow>[경고]</color> 숫자를 먼저 드래그해서 넣어주세요!");
             return;
         }
 
@@ -180,15 +178,11 @@ public class MathProblemPaper : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 종이 위에 O/X 연출을 먼저 보여준 뒤, 결과 UI를 띄우는 코루틴 (애니메이션 스케일 보완)
-    /// </summary>
     private IEnumerator PlayMarkAnimationAndShowUI(GameObject targetMark, bool isCorrect)
     {
         targetMark.SetActive(true);
         Transform markTransform = targetMark.transform;
 
-        // [중요] 오브젝트 원래의 스케일을 기억해 둡니다 (유니티 인스펙터에서 설정한 크기 유지)
         Vector3 originalScale = markTransform.localScale;
 
         float duration = 0.3f;
@@ -197,21 +191,17 @@ public class MathProblemPaper : MonoBehaviour
         Vector3 startScale = Vector3.zero;
         markTransform.localScale = startScale;
 
-        // 1. O 또는 X 마크가 0에서 원래 크기(originalScale)로 팡 커지는 연출 재생
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-            // 부드러운 연출을 위해 서서히 커지게 설정
             markTransform.localScale = Vector3.Lerp(startScale, originalScale, t);
             yield return null;
         }
         markTransform.localScale = originalScale;
 
-        // 2. 연출이 끝난 후 0.4초 대기
         yield return new WaitForSeconds(0.4f);
 
-        // 3. 결과 UI 활성화 및 텍스트/버튼 설정
         if (resultUIPanel != null) resultUIPanel.SetActive(true);
 
         if (isCorrect)
@@ -227,13 +217,10 @@ public class MathProblemPaper : MonoBehaviour
             if (mainMenuButton != null) mainMenuButton.gameObject.SetActive(true);
         }
 
-        // 4. 결과 UI가 떴으므로 캐릭터 시점 회전 정지 및 마우스 해제
         SetGamePlayState(false);
     }
 
-    /// <summary>
-    /// 게임 플레이 중일 때는 시점 회전을 켜고, 결과 UI가 떴을 때는 시점 회전을 끄는 함수
-    /// </summary>
+
     private void SetGamePlayState(bool isPlaying)
     {
         if (isPlaying)
@@ -241,8 +228,6 @@ public class MathProblemPaper : MonoBehaviour
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
 
-            // 플레이어 시점 이동 스크립트 활성화 (사용 중이신 스크립트 이름으로 켜기)
-            // 예시: PlayerController 또는 MouseLook 컴포넌트 찾아서 켜주기
             var playerScript = FindFirstObjectByType<PlayerController>();
             if (playerScript != null) playerScript.enabled = true;
         }
@@ -251,7 +236,6 @@ public class MathProblemPaper : MonoBehaviour
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
-            // 플레이어 시점 이동 스크립트 비활성화
             var playerScript = FindFirstObjectByType<PlayerController>();
             if (playerScript != null) playerScript.enabled = false;
         }

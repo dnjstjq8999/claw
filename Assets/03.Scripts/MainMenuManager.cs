@@ -3,28 +3,73 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [Header("--- 이동할 스테이지 씬 이름 ---")]
-    public string stage1SceneName = "Stage1"; // Build Settings에 등록된 씬 이름
+    [Header("--- 씬 이름 설정 ---")]
+    public string stage1SceneName = "Stage1";
 
-    /// <summary>
-    /// 게임 시작 버튼 클릭 시 호출
-    /// </summary>
+    [Header("--- UI 팝업 패널 ---")]
+    public GameObject optionsPanel;
+    public GameObject reinforcePanel;
+
+    [Header("--- 사운드 설정 ---")]
+    public AudioSource audioSource;
+    public AudioClip clickSFX;
+
+    private void Start()
+    {
+        // 씬 시작 시 팝업창들은 닫아둠
+        if (optionsPanel != null) optionsPanel.SetActive(false);
+        if (reinforcePanel != null) reinforcePanel.SetActive(false);
+    }
+
     public void OnClickStartGame()
     {
-        Debug.Log("Stage 1 진입 중...");
+        PlayClickSound();
         SceneManager.LoadScene(stage1SceneName);
     }
 
-    /// <summary>
-    /// 게임 종료 버튼 클릭 시 호출 (선택 사항)
-    /// </summary>
+    public void OnClickOptions()
+    {
+        PlayClickSound();
+        if (optionsPanel != null)
+        {
+            optionsPanel.SetActive(true);
+        }
+    }
+
+    public void OnClickReinforce()
+    {
+        PlayClickSound();
+        if (reinforcePanel != null)
+        {
+            reinforcePanel.SetActive(true);
+        }
+    }
+
+    public void OnClickClosePanel(GameObject panel)
+    {
+        PlayClickSound();
+        if (panel != null)
+        {
+            panel.SetActive(false);
+        }
+    }
+
     public void OnClickQuitGame()
     {
-        Debug.Log("게임 종료");
+        PlayClickSound();
+
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
-            Application.Quit();
+        Application.Quit();
 #endif
+    }
+
+    private void PlayClickSound()
+    {
+        if (audioSource != null && clickSFX != null)
+        {
+            audioSource.PlayOneShot(clickSFX);
+        }
     }
 }

@@ -6,7 +6,6 @@ using System.Collections;
 public class FactoryButtonController : MonoBehaviour
 {
     [Header("버튼 움직임 설정")]
-    [Tooltip("안으로 들어갈 빨간색 버튼 윗부분 (buttonredtop-1)")]
     [SerializeField] private Transform buttonTop;
 
     [Header("조절 가능한 버튼 깊이 & 속도")]
@@ -71,8 +70,6 @@ public class FactoryButtonController : MonoBehaviour
             factoryPromptUI.SetActive(false);
         }
 
-        // [핵심] X축 방향으로 누르는 연출입니다.
-        // 만약 이 상태에서 바깥(오른쪽)으로 튀어나온다면, 아래의 '+ pressDepth'를 '- pressDepth'로 바꿔주세요!
         if (buttonTop != null)
         {
             Vector3 targetPos = initialLocalPos + new Vector3(pressDepth, 0, 0);
@@ -87,7 +84,6 @@ public class FactoryButtonController : MonoBehaviour
             buttonTop.localPosition = targetPos;
         }
 
-        // 채점 및 결과 처리 호출
         if (MathProblemPaper.Instance != null)
         {
             MathProblemPaper.Instance.OnSubmitButtonClicked();
@@ -95,7 +91,6 @@ public class FactoryButtonController : MonoBehaviour
 
         yield return new WaitForSeconds(0.15f);
 
-        // 원래 자리로 복구
         if (buttonTop != null)
         {
             float elapsed = 0f;

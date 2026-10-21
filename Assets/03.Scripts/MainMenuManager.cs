@@ -7,6 +7,7 @@ public class MainMenuManager : MonoBehaviour
     public string stage1SceneName = "Stage1";
 
     [Header("--- UI ÆË¾÷ ÆÐ³Î ---")]
+    public GameObject homePanel;
     public GameObject optionsPanel;
     public GameObject reinforcePanel;
 
@@ -39,6 +40,7 @@ public class MainMenuManager : MonoBehaviour
     public void OnClickReinforce()
     {
         PlayClickSound();
+        if (homePanel != null) homePanel.SetActive(false);
         if (reinforcePanel != null)
         {
             reinforcePanel.SetActive(true);

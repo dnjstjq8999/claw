@@ -12,11 +12,14 @@ public class MathProblemPaper : MonoBehaviour
     [Header("UI Reference")]
     [SerializeField] private TextMeshProUGUI problemText;
 
-    [Header("결과 팝업 UI 패널 설정")]
-    public GameObject resultUIPanel;
-    public TextMeshProUGUI resultMessageText;
-    public Button nextStageButton;
-    public Button mainMenuButton;
+    [Header("--- 새로 만든 결과 패널 연결 ---")]
+    [SerializeField] private GameObject victoryPanel;  // Victory 패널 연결
+    [SerializeField] private GameObject gameOverPanel; // GameOver 패널 연결
+
+    [Header("--- 이동할 씬 이름 및 대기 시간 ---")]
+    [SerializeField] private string nextStageSceneName = "Stage2";       // 다음 스테이지 씬 이름
+    [SerializeField] private string mainMenuSceneName = "MainMenuScene"; // 메인 메뉴 씬 이름
+    [SerializeField] private float delayTime = 3.0f;                     // 결과 패널 띄우고 대기할 시간 (초)
 
     [Header("종이 위 마크 (동그라미 / 빗금)")]
     public GameObject circleMarkObj;
@@ -49,7 +52,9 @@ public class MathProblemPaper : MonoBehaviour
 
     void Start()
     {
-        if (resultUIPanel != null) resultUIPanel.SetActive(false);
+        // 시작 시 결과 패널 및 마크들 모두 숨기기
+        if (victoryPanel != null) victoryPanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
         if (circleMarkObj != null) circleMarkObj.SetActive(false);
         if (crossMarkObj != null) crossMarkObj.SetActive(false);
 
@@ -84,7 +89,8 @@ public class MathProblemPaper : MonoBehaviour
 
         currentPlayerAnswer = null;
 
-        if (resultUIPanel != null) resultUIPanel.SetActive(false);
+        if (victoryPanel != null) victoryPanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
         if (circleMarkObj != null) circleMarkObj.SetActive(false);
         if (crossMarkObj != null) crossMarkObj.SetActive(false);
 
@@ -162,7 +168,8 @@ public class MathProblemPaper : MonoBehaviour
 
     public void CheckAnswer(int playerAnswer)
     {
-        if (resultUIPanel != null) resultUIPanel.SetActive(false);
+        if (victoryPanel != null) victoryPanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
         bool isCorrect = (playerAnswer == correctAnswer);
 
@@ -202,24 +209,33 @@ public class MathProblemPaper : MonoBehaviour
 
         yield return new WaitForSeconds(0.4f);
 
-        if (resultUIPanel != null) resultUIPanel.SetActive(true);
+        // 조작 잠금 및 시간 일시정지 (연출용)
+        SetGamePlayState(false);
+        Time.timeScale = 0f;
 
         if (isCorrect)
         {
-            if (resultMessageText != null) resultMessageText.text = "CLEAR!";
-            if (nextStageButton != null) nextStageButton.gameObject.SetActive(true);
-            if (mainMenuButton != null) mainMenuButton.gameObject.SetActive(true);
+            // 승리 패널 켜기 & 3초 후 다음 스테이지 이동
+            if (victoryPanel != null) victoryPanel.SetActive(true);
+            if (gameOverPanel != null) gameOverPanel.SetActive(false);
+
+            yield return new WaitForSecondsRealtime(delayTime);
+
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(nextStageSceneName);
         }
         else
         {
-            if (resultMessageText != null) resultMessageText.text = "FAIL!";
-            if (nextStageButton != null) nextStageButton.gameObject.SetActive(false);
-            if (mainMenuButton != null) mainMenuButton.gameObject.SetActive(true);
+            // 게임오버 패널 켜기 & 3초 후 메인 메뉴 이동
+            if (gameOverPanel != null) gameOverPanel.SetActive(true);
+            if (victoryPanel != null) victoryPanel.SetActive(false);
+
+            yield return new WaitForSecondsRealtime(delayTime);
+
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(mainMenuSceneName);
         }
-
-        SetGamePlayState(false);
     }
-
 
     private void SetGamePlayState(bool isPlaying)
     {
@@ -239,15 +255,5 @@ public class MathProblemPaper : MonoBehaviour
             var playerScript = FindFirstObjectByType<PlayerController>();
             if (playerScript != null) playerScript.enabled = false;
         }
-    }
-
-    public void OnClickNextStage()
-    {
-        GenerateNewProblem();
-    }
-
-    public void OnClickMainMenu()
-    {
-        Debug.Log("메인 메뉴로 이동!");
     }
 }

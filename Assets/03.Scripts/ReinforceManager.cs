@@ -45,19 +45,19 @@ public class ReinforceManager : MonoBehaviour
             int currentLevel = GetLevel(i);
             bool isMax = (currentLevel >= maxLevel);
 
-            // 1. Current Level 텍스트 업데이트 (만렙일 때도 10으로 제대로 뜨도록 반영)
+            // Current Level 텍스트 업데이트
             if (currentLevelTextArray != null && i < currentLevelTextArray.Length && currentLevelTextArray[i] != null)
             {
                 currentLevelTextArray[i].text = $"Current Level : {currentLevel}";
             }
 
-            // 2. Now 텍스트 업데이트
+            // Now 텍스트 업데이트
             if (nowTextArray != null && i < nowTextArray.Length && nowTextArray[i] != null)
             {
                 nowTextArray[i].text = GetStatText(i, currentLevel);
             }
 
-            // 3. Next 텍스트 업데이트 (만렙이면 "-", 아니면 다음 레벨 스탯)
+            // Next 텍스트 업데이트
             if (nextTextArray != null && i < nextTextArray.Length && nextTextArray[i] != null)
             {
                 if (isMax)
@@ -66,7 +66,7 @@ public class ReinforceManager : MonoBehaviour
                     nextTextArray[i].text = GetStatText(i, currentLevel + 1);
             }
 
-            // 4. Required Capsules 텍스트 업데이트 (만렙이면 "-", 아니면 비용 표시)
+            // Required Capsules 텍스트 업데이트
             if (requiredTextArray != null && i < requiredTextArray.Length && requiredTextArray[i] != null)
             {
                 if (isMax)

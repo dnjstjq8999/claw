@@ -1,13 +1,26 @@
 using System.Collections;
 using UnityEngine;
 
-
 public class ClawPhysicsGrip : MonoBehaviour
 {
     [Header("--- 잡기 상태 ---")]
     public Rigidbody currentTargetBall;
 
     private FixedJoint activeJoint;
+
+    private void Start()
+    {
+        if (GameManager.Instance != null)
+        {
+            float targetY = GameManager.Instance.GetCurrentClawCenterY();
+
+            Vector3 localPos = transform.localPosition;
+            localPos.y = targetY;
+            transform.localPosition = localPos;
+
+            Debug.Log($"[집게 파워 연동] 적용된 Y 위치: {targetY}");
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -49,7 +62,6 @@ public class ClawPhysicsGrip : MonoBehaviour
             activeJoint.breakTorque = float.PositiveInfinity;
         }
     }
-
 
     public void ReleaseBall()
     {

@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
 public class ClawMachineInteraction : MonoBehaviour
 {
     [Header("카메라 설정")]
     public Camera characterCamera;
     public GameObject frontCamera;
     public GameObject sideCamera;
+
     [Header("플레이어 및 기계 스크립트 참조")]
     public PlayerController playerController;
     public ClawMachineController clawMachineController;
@@ -51,7 +51,7 @@ public class ClawMachineInteraction : MonoBehaviour
         {
             HandleCameraSwitchInput();
 
-            if (IsEscPressed())
+            if (IsEPressed())
             {
                 ExitClawMachine();
             }
@@ -176,11 +176,5 @@ public class ClawMachineInteraction : MonoBehaviour
     {
         if (Keyboard.current != null) return Keyboard.current.eKey.wasPressedThisFrame;
         return Input.GetKeyDown(KeyCode.E);
-    }
-
-    private bool IsEscPressed()
-    {
-        if (Keyboard.current != null) return Keyboard.current.escapeKey.wasPressedThisFrame;
-        return Input.GetKeyDown(KeyCode.Escape);
     }
 }

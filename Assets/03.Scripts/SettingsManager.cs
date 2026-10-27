@@ -18,12 +18,18 @@ public class SettingsManager : MonoBehaviour
     public TMP_Dropdown resolutionDropdown;
     private struct Res { public int w; public int h; }
 
-    // 해상도 후보군 리스트 (실행할 때 모니터 지원 여부에 따라 필터링 됨)
+    // 해상도 리스트 (실행할 때 모니터 지원 여부에 따라 필터링)
     private List<Res> resolutions = new List<Res>();
     private List<string> resolutionOptions = new List<string>();
 
     [Header("--- FPS 제한 설정 (드롭다운) ---")]
     public TMP_Dropdown fpsDropdown;
+
+    [Header("--- 마우스 감도 설정 ---")]
+    public Slider sensitivitySlider;
+
+    [Header("--- 창모드 설정 (토글) ---")]
+    public Toggle screenModeToggle;
 
     private void Start()
     {
@@ -59,9 +65,29 @@ public class SettingsManager : MonoBehaviour
 
             fpsDropdown.onValueChanged.AddListener(OnFpsChanged);
         }
+
+        // 5. 마우스 감도 초기화 (GameManager 연동)
+        if (sensitivitySlider != null && GameManager.Instance != null)
+        {
+            sensitivitySlider.value = GameManager.Instance.mouseSensitivity;
+            sensitivitySlider.onValueChanged.AddListener(OnSensitivityChanged);
+        }
+
+        // 6. 창모드 토글 초기화
+        if (screenModeToggle != null)
+        {
+            // PlayerPrefs에서 저장된 값 불러오기 (기본값 1 = 전체화면 켜짐)
+            bool isFullScreen = PlayerPrefs.GetInt("IsFullScreen", 1) == 1;
+            screenModeToggle.isOn = isFullScreen;
+
+            // 게임 시작 시 실제 화면 모드 적용
+            ApplyScreenMode(isFullScreen);
+
+            // 토글 상태가 바뀔 때 실행될 함수 연결
+            screenModeToggle.onValueChanged.AddListener(OnScreenModeChanged);
+        }
     }
 
-    // 모니터가 지원하는 해상도만 골라 담는 함수
     private void InitResolutions()
     {
         if (resolutionDropdown == null) return;
@@ -160,5 +186,41 @@ public class SettingsManager : MonoBehaviour
         }
 
         PlayerPrefs.SetInt("FPSIndex", index);
+    }
+
+    // 마우스 감도 변경 함수
+    public void OnSensitivityChanged(float value)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.mouseSensitivity = value;
+            PlayerPrefs.SetFloat("MouseSensitivity", value);
+            PlayerPrefs.Save();
+        }
+    }
+
+    public void OnScreenModeChanged(bool isFullScreen)
+    {
+        ApplyScreenMode(isFullScreen);
+
+        // PlayerPrefs에 저장 (1: 전체화면, 0: 창모드)
+        PlayerPrefs.SetInt("IsFullScreen", isFullScreen ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    private void ApplyScreenMode(bool isFullScreen)
+    {
+        if (isFullScreen)
+        {
+            // 전체화면
+            Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+            Screen.fullScreen = true;
+        }
+        else
+        {
+            // 창모드
+            Screen.fullScreenMode = FullScreenMode.Windowed;
+            Screen.fullScreen = false;
+        }
     }
 }

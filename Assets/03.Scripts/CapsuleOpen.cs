@@ -79,6 +79,11 @@ public class CapsuleOpen : MonoBehaviour
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
 
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddCapsules(1);
+        }
+
         TriggerRedNumberPopup(ballTransform.position);
     }
 

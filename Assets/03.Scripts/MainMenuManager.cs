@@ -17,7 +17,6 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
-        // ¾À ½ÃÀÛ ½Ã ÆË¾÷Ã¢µéÀº ´Ý¾ÆµÒ
         if (optionsPanel != null) optionsPanel.SetActive(false);
         if (reinforcePanel != null) reinforcePanel.SetActive(false);
     }
@@ -25,7 +24,9 @@ public class MainMenuManager : MonoBehaviour
     public void OnClickStartGame()
     {
         PlayClickSound();
-        SceneManager.LoadScene(stage1SceneName);
+
+        LoadingSceneController.nextSceneName = stage1SceneName;
+        SceneManager.LoadScene("LoadingScene");
     }
 
     public void OnClickOptions()

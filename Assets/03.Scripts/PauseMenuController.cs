@@ -44,7 +44,6 @@ public class PauseMenuController : MonoBehaviour
 
         var playerScript = FindFirstObjectByType<PlayerController>();
         if (playerScript != null) playerScript.enabled = false;
-
     }
 
     public void ResumeGame()

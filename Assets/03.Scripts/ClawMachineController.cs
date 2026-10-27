@@ -13,8 +13,12 @@ public class ClawMachineController : MonoBehaviour
     [Header("--- 물리 잡기 시스템 연동 ---")]
     public ClawPhysicsGrip clawGrip;
 
-    [Header("--- 방향키 수평 이동 설정 ---")]
+    [Header("--- 방향키 수평 이동 설정 (1~10레벨 업그레이드 연동) ---")]
     public float moveSpeed = 3f;
+    private float baseMoveSpeed;
+    public int minLevel = 1;
+    public int maxLevel = 10;
+
     public Vector2 minBounds = new Vector2(-2.5f, -2.5f);
     public Vector2 maxBounds = new Vector2(2.5f, 2.5f);
 
@@ -37,6 +41,8 @@ public class ClawMachineController : MonoBehaviour
 
     void Start()
     {
+        baseMoveSpeed = moveSpeed;
+
         if (carriageTransform != null)
         {
             initialCarriagePos = carriageTransform.position;
@@ -71,10 +77,17 @@ public class ClawMachineController : MonoBehaviour
                 }
             }
         }
+
+        ApplyClawSpeedUpgrade();
     }
 
     void Update()
     {
+        if (GameManager.Instance != null)
+        {
+            ApplyClawSpeedUpgrade();
+        }
+
         if (Keyboard.current == null) return;
 
         if (!isOperating)
@@ -85,6 +98,22 @@ public class ClawMachineController : MonoBehaviour
             {
                 StartCoroutine(ClawSequenceRoutine());
             }
+        }
+    }
+
+    void ApplyClawSpeedUpgrade()
+    {
+        if (GameManager.Instance != null)
+        {
+            int clawSpeedLevel = GameManager.Instance.currentData.clawSpeedLevel;
+
+            clawSpeedLevel = Mathf.Clamp(clawSpeedLevel, minLevel, maxLevel);
+
+            float ratio = (float)(clawSpeedLevel - minLevel) / (maxLevel - minLevel);
+
+            float targetSpeed = Mathf.Lerp(baseMoveSpeed, baseMoveSpeed * 2.0f, ratio);
+
+            moveSpeed = targetSpeed;
         }
     }
 

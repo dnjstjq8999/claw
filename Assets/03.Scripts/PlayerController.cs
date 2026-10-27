@@ -5,8 +5,12 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
-    [Header("--- 이동 설정 ---")]
+    [Header("--- 이동 설정 (1~10레벨 업그레이드 연동) ---")]
     public float moveSpeed = 5f;
+    private float baseMoveSpeed;
+    public int minLevel = 1;
+    public int maxLevel = 10;
+
     public float gravity = -9.81f;
 
     [Header("--- 시점 회전 설정 (에임 동기화) ---")]
@@ -23,21 +27,26 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        controller = GetComponent<CharacterController>();
+        baseMoveSpeed = moveSpeed;
 
+        controller = GetComponent<CharacterController>();
         LockCursor(true);
+
+        ApplyPlayerSpeedUpgrade();
     }
 
     void Update()
     {
+        ApplyPlayerSpeedUpgrade();
+
+        if (!canMove) return;
+
         if (canMove && Cursor.lockState != CursorLockMode.Locked)
         {
             LockCursor(true);
         }
 
         if (Keyboard.current == null || Mouse.current == null) return;
-
-        if (!canMove) return;
 
         // 1. 화면 중앙 에임 기준 시점 회전
         HandleMouseLook();
@@ -48,7 +57,7 @@ public class PlayerController : MonoBehaviour
             velocity.y = -2f;
         }
 
-        // 3. 이동 처리 (캐릭터가 바라보는 정면 기준)
+        // 3. 이동 처리
         float moveX = 0f;
         float moveZ = 0f;
 
@@ -66,12 +75,23 @@ public class PlayerController : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
+    void ApplyPlayerSpeedUpgrade()
+    {
+        if (GameManager.Instance != null)
+        {
+            moveSpeed = GameManager.Instance.GetCurrentMoveSpeed();
+        }
+    }
+
     private void HandleMouseLook()
     {
         Vector2 mouseDelta = Mouse.current.delta.ReadValue();
 
-        float mouseX = mouseDelta.x * mouseSensitivity * 0.1f;
-        float mouseY = mouseDelta.y * mouseSensitivity * 0.1f;
+        float rawSensitivity = (GameManager.Instance != null) ? GameManager.Instance.mouseSensitivity : mouseSensitivity;
+        float currentSensitivity = Mathf.Max(rawSensitivity, 0.1f);
+
+        float mouseX = mouseDelta.x * currentSensitivity * 1.0f;
+        float mouseY = mouseDelta.y * currentSensitivity * 1.0f;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, minVerticalAngle, maxVerticalAngle);

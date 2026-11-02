@@ -11085,6 +11085,7 @@ MonoBehaviour:
     clawPowerLevel: 1
     timeLimitLevel: 1
   mouseSensitivity: 2
+  currentStage: 1
 --- !u!4 &1384128630
 Transform:
   m_ObjectHideFlags: 0
@@ -13841,7 +13842,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4277f3d940f16e44a82b5980f699f959, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuManager
-  stage1SceneName: Stage1
+  stage1SceneName: StageScene
   homePanel: {fileID: 153648520}
   optionsPanel: {fileID: 552010767}
   reinforcePanel: {fileID: 2076960688}

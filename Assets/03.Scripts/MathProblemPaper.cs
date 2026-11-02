@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,147 +8,267 @@ public class MathProblemPaper : MonoBehaviour
 {
     public static MathProblemPaper Instance;
 
+    [System.Serializable]
+    public class ProblemUIGroup
+    {
+        public TextMeshProUGUI problemText;
+        public TextMeshProUGUI[] slotTexts;
+    }
+
     [Header("UI Reference")]
-    [SerializeField] private TextMeshProUGUI problemText;
+    [SerializeField] private ProblemUIGroup[] problemUIgroups;
 
-    [Header("--- 새로 만든 결과 패널 연결 ---")]
-    [SerializeField] private GameObject victoryPanel;  // Victory 패널 연결
-    [SerializeField] private GameObject gameOverPanel; // GameOver 패널 연결
+    [Header("--- 결과 패널 ---")]
+    [SerializeField] private GameObject victoryPanel;
+    [SerializeField] private GameObject gameOverPanel;
 
-    [Header("--- 이동할 씬 이름 및 대기 시간 ---")]
-    [SerializeField] private string nextStageSceneName = "Stage2";       // 다음 스테이지 씬 이름
-    [SerializeField] private string mainMenuSceneName = "MainMenuScene"; // 메인 메뉴 씬 이름
-    [SerializeField] private float delayTime = 3.0f;                     // 결과 패널 띄우고 대기할 시간 (초)
+    [Header("--- 씬 이동 및 설정 ---")]
+    [SerializeField] private string stageSceneName = "StageScene";
+    [SerializeField] private string mainMenuSceneName = "MainMenuScene";
+    [SerializeField] private float delayTime = 3.0f;
 
-    [Header("종이 위 마크 (동그라미 / 빗금)")]
     public GameObject circleMarkObj;
     public GameObject crossMarkObj;
 
-    [Header("Current Problem Data")]
-    public int operand1;
-    public int operand2;
-    public int correctAnswer;
-
-    private int? currentPlayerAnswer = null;
-    private Vector3 lastOriginalPosition;
-
-    private struct ProblemPair
+    [System.Serializable]
+    public struct ProblemData
     {
-        public int num1;
-        public int num2;
-        public ProblemPair(int a, int b) { num1 = a; num2 = b; }
+        public int operand1;
+        public int operand2;
+        public int correctAnswer;
+        public int?[] slots;
+        public GameObject[] slotPlacedObjects; // 슬롯에 들어간 실제 오브젝트 저장
+
+        public ProblemData(int a, int b)
+        {
+            operand1 = a;
+            operand2 = b;
+            correctAnswer = a * b;
+
+            int count = 1;
+            if (correctAnswer >= 100) count = 3;
+            else if (correctAnswer >= 10) count = 2;
+
+            slots = new int?[count];
+            slotPlacedObjects = new GameObject[count];
+        }
+
+        public bool IsComplete
+        {
+            get
+            {
+                foreach (var s in slots)
+                {
+                    if (!s.HasValue) return false;
+                }
+                return true;
+            }
+        }
+
+        public int? GetPlayerAnswerValue()
+        {
+            if (!IsComplete) return null;
+
+            int val = 0;
+            foreach (var s in slots)
+            {
+                if (!s.HasValue) return null;
+                val = val * 10 + s.Value;
+            }
+            return val;
+        }
     }
 
-    private List<ProblemPair> validProblems = new List<ProblemPair>();
+    [SerializeField] private List<ProblemData> currentProblems = new List<ProblemData>();
+    private int requiredProblemCount = 1;
 
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
-
-        InitializeValidProblems();
     }
 
     void Start()
     {
-        // 시작 시 결과 패널 및 마크들 모두 숨기기
         if (victoryPanel != null) victoryPanel.SetActive(false);
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
         if (circleMarkObj != null) circleMarkObj.SetActive(false);
         if (crossMarkObj != null) crossMarkObj.SetActive(false);
 
-        GenerateNewProblem();
+        int stage = (GameManager.Instance != null) ? GameManager.Instance.currentStage : 1;
+
+        if (stage == 1) requiredProblemCount = 1;
+        else if (stage == 2) requiredProblemCount = 1;
+        else if (stage >= 3 && stage <= 5) requiredProblemCount = 1;
+        else if (stage >= 6 && stage <= 8) requiredProblemCount = 2;
+        else requiredProblemCount = 3;
+
+        GenerateProblemsStrict(stage);
     }
 
-    private void InitializeValidProblems()
+    public void GenerateProblemsStrict(int currentStage)
     {
-        validProblems.Clear();
-        for (int i = 1; i <= 9; i++)
+        currentProblems.Clear();
+
+        for (int i = 0; i < requiredProblemCount; i++)
         {
-            for (int j = 1; j <= 9; j++)
+            int num1 = 1, num2 = 1;
+
+            if (currentStage == 1)
             {
-                if (i * j <= 9)
+                do
                 {
-                    validProblems.Add(new ProblemPair(i, j));
+                    num1 = Random.Range(1, 4);
+                    num2 = Random.Range(2, 4);
+                } while (num1 * num2 >= 10);
+            }
+            else if (currentStage == 2)
+            {
+                do
+                {
+                    num1 = Random.Range(6, 10);
+                    num2 = Random.Range(6, 10);
+                } while (num1 * num2 < 10 || num1 * num2 >= 100);
+            }
+            else if (currentStage >= 3 && currentStage <= 5)
+            {
+                do
+                {
+                    num1 = Random.Range(8, 20);
+                    num2 = Random.Range(8, 20);
+                } while (num1 * num2 < 10);
+            }
+            else if (currentStage >= 6 && currentStage <= 8)
+            {
+                do
+                {
+                    num1 = Random.Range(5, 12);
+                    num2 = Random.Range(5, 12);
+                } while (num1 * num2 < 10);
+            }
+            else
+            {
+                do
+                {
+                    num1 = Random.Range(6, 13);
+                    num2 = Random.Range(6, 13);
+                } while (num1 * num2 < 10);
+            }
+
+            currentProblems.Add(new ProblemData(num1, num2));
+        }
+
+        UpdateAllProblemUI();
+        SetGamePlayState(true);
+    }
+
+    private void UpdateAllProblemUI()
+    {
+        for (int i = 0; i < problemUIgroups.Length; i++)
+        {
+            var group = problemUIgroups[i];
+            if (group == null || group.problemText == null) continue;
+
+            if (i < currentProblems.Count)
+            {
+                group.problemText.gameObject.SetActive(true);
+                var p = currentProblems[i];
+
+                group.problemText.fontSize = 14f;
+                group.problemText.textWrappingMode = TextWrappingModes.NoWrap;
+                group.problemText.text = $"{p.operand1} × {p.operand2} =";
+
+                for (int d = 0; d < group.slotTexts.Length; d++)
+                {
+                    if (group.slotTexts[d] == null) continue;
+
+                    if (d < p.slots.Length)
+                    {
+                        group.slotTexts[d].gameObject.SetActive(true);
+                        group.slotTexts[d].fontSize = 14f;
+                        group.slotTexts[d].textWrappingMode = TextWrappingModes.NoWrap;
+
+                        if (p.slots[d].HasValue)
+                        {
+                            group.slotTexts[d].text = $"<color=red>{p.slots[d].Value}</color>";
+                        }
+                        else
+                        {
+                            group.slotTexts[d].text = "?";
+                        }
+                    }
+                    else
+                    {
+                        group.slotTexts[d].gameObject.SetActive(false);
+                    }
+                }
+            }
+            else
+            {
+                group.problemText.gameObject.SetActive(false);
+                if (group.slotTexts != null)
+                {
+                    foreach (var slot in group.slotTexts)
+                    {
+                        if (slot != null) slot.gameObject.SetActive(false);
+                    }
                 }
             }
         }
     }
 
-    public void GenerateNewProblem()
+    public bool TryDropNumberToNearestSlot(Vector3 dropPosition, int number, GameObject draggedObject)
     {
-        if (validProblems.Count == 0) InitializeValidProblems();
+        int bestProblemIndex = -1;
+        int bestSlotIndex = -1;
+        float minDistance = float.MaxValue;
 
-        int randomIndex = Random.Range(0, validProblems.Count);
-        ProblemPair selected = validProblems[randomIndex];
-
-        operand1 = selected.num1;
-        operand2 = selected.num2;
-        correctAnswer = operand1 * operand2;
-
-        currentPlayerAnswer = null;
-
-        if (victoryPanel != null) victoryPanel.SetActive(false);
-        if (gameOverPanel != null) gameOverPanel.SetActive(false);
-        if (circleMarkObj != null) circleMarkObj.SetActive(false);
-        if (crossMarkObj != null) crossMarkObj.SetActive(false);
-
-        SetGamePlayState(true);
-
-        UpdateProblemUI();
-    }
-
-    public void SetPlayerAnswer(int answer, Vector3 spawnPosition)
-    {
-        if (currentPlayerAnswer.HasValue)
+        for (int i = 0; i < currentProblems.Count; i++)
         {
-            int oldAnswer = currentPlayerAnswer.Value;
-            SpawnReturnedNumber(oldAnswer, lastOriginalPosition);
+            if (i >= problemUIgroups.Length) break;
+            var group = problemUIgroups[i];
+            var p = currentProblems[i];
+
+            for (int d = 0; d < p.slots.Length; d++)
+            {
+                if (d >= group.slotTexts.Length || group.slotTexts[d] == null) continue;
+                if (!group.slotTexts[d].gameObject.activeSelf) continue;
+
+                Vector3 slotWorldPos = group.slotTexts[d].transform.position;
+                float dist = Vector3.Distance(dropPosition, slotWorldPos);
+
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    bestProblemIndex = i;
+                    bestSlotIndex = d;
+                }
+            }
         }
 
-        currentPlayerAnswer = answer;
-        lastOriginalPosition = spawnPosition;
-        UpdateProblemUI();
-    }
-
-    private void SpawnReturnedNumber(int numberValue, Vector3 returnPos)
-    {
-        GameObject textObj = new GameObject("ReturnedNumber");
-        textObj.transform.position = returnPos;
-
-        TextMeshPro tmp = textObj.AddComponent<TextMeshPro>();
-        tmp.text = numberValue.ToString();
-        tmp.fontSize = 5;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.red;
-
-        if (Camera.main != null)
+        if (bestProblemIndex != -1 && bestSlotIndex != -1 && minDistance < 1.0f)
         {
-            textObj.transform.rotation = Camera.main.transform.rotation;
-        }
+            var p = currentProblems[bestProblemIndex];
 
-        DraggableNumberToText draggable = textObj.AddComponent<DraggableNumberToText>();
-        draggable.originalPosition = returnPos;
-    }
+            if (p.slots[bestSlotIndex].HasValue && p.slotPlacedObjects[bestSlotIndex] != null)
+            {
+                GameObject oldObj = p.slotPlacedObjects[bestSlotIndex];
 
-    private void UpdateProblemUI()
-    {
-        if (problemText != null)
-        {
-            string answerStr = currentPlayerAnswer.HasValue ? $"<color=red>{currentPlayerAnswer.Value}</color>" : "?";
-            problemText.text = $"{operand1} × {operand2} = {answerStr}";
-        }
-    }
+                DraggableNumberToText draggableComp = oldObj.GetComponent<DraggableNumberToText>();
+                if (draggableComp != null)
+                {
+                    oldObj.transform.position = draggableComp.originalPosition;
+                }
+                oldObj.SetActive(true);
+            }
 
-    public bool TryDropNumber(Vector3 dropPosition, int number, Vector3 spawnPos)
-    {
-        Vector3 paperPos = transform.position;
-        float distX = dropPosition.x - paperPos.x;
-        float distZ = dropPosition.z - paperPos.z;
+            p.slots[bestSlotIndex] = number;
+            p.slotPlacedObjects[bestSlotIndex] = draggedObject;
+            draggedObject.SetActive(false);
 
-        if (Mathf.Abs(distX) < 0.8f && Mathf.Abs(distZ) < 0.6f)
-        {
-            SetPlayerAnswer(number, spawnPos);
+            currentProblems[bestProblemIndex] = p;
+
+            UpdateAllProblemUI();
             return true;
         }
 
@@ -158,80 +277,63 @@ public class MathProblemPaper : MonoBehaviour
 
     public void OnSubmitButtonClicked()
     {
-        if (!currentPlayerAnswer.HasValue)
+        foreach (var p in currentProblems)
         {
-            return;
+            if (!p.IsComplete) return;
         }
 
-        CheckAnswer(currentPlayerAnswer.Value);
+        CheckAllAnswers();
     }
 
-    public void CheckAnswer(int playerAnswer)
+    private void CheckAllAnswers()
     {
-        if (victoryPanel != null) victoryPanel.SetActive(false);
-        if (gameOverPanel != null) gameOverPanel.SetActive(false);
-
-        bool isCorrect = (playerAnswer == correctAnswer);
-
-        if (isCorrect)
+        bool allCorrect = true;
+        foreach (var p in currentProblems)
         {
-            if (crossMarkObj != null) crossMarkObj.SetActive(false);
-            if (circleMarkObj != null) StartCoroutine(PlayMarkAnimationAndShowUI(circleMarkObj, true));
+            int? finalAns = p.GetPlayerAnswerValue();
+            if (!finalAns.HasValue || finalAns.Value != p.correctAnswer)
+            {
+                allCorrect = false;
+                break;
+            }
         }
-        else
-        {
-            if (circleMarkObj != null) circleMarkObj.SetActive(false);
-            if (crossMarkObj != null) StartCoroutine(PlayMarkAnimationAndShowUI(crossMarkObj, false));
-        }
+
+        StartCoroutine(PlayMarkAnimationAndShowUI(allCorrect));
     }
 
-    private IEnumerator PlayMarkAnimationAndShowUI(GameObject targetMark, bool isCorrect)
+    private IEnumerator PlayMarkAnimationAndShowUI(bool isCorrect)
     {
-        targetMark.SetActive(true);
-        Transform markTransform = targetMark.transform;
-
-        Vector3 originalScale = markTransform.localScale;
-
-        float duration = 0.3f;
-        float elapsed = 0f;
-
-        Vector3 startScale = Vector3.zero;
-        markTransform.localScale = startScale;
-
-        while (elapsed < duration)
+        GameObject targetMark = isCorrect ? circleMarkObj : crossMarkObj;
+        if (targetMark != null)
         {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-            markTransform.localScale = Vector3.Lerp(startScale, originalScale, t);
-            yield return null;
+            targetMark.SetActive(true);
         }
-        markTransform.localScale = originalScale;
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.8f);
 
-        // 조작 잠금 및 시간 일시정지 (연출용)
         SetGamePlayState(false);
         Time.timeScale = 0f;
 
         if (isCorrect)
         {
-            // 승리 패널 켜기 & 3초 후 다음 스테이지 이동
             if (victoryPanel != null) victoryPanel.SetActive(true);
-            if (gameOverPanel != null) gameOverPanel.SetActive(false);
-
             yield return new WaitForSecondsRealtime(delayTime);
-
             Time.timeScale = 1f;
-            SceneManager.LoadScene(nextStageSceneName);
+
+            if (GameManager.Instance.currentStage >= 10)
+            {
+                SceneManager.LoadScene(mainMenuSceneName);
+            }
+            else
+            {
+                GameManager.Instance.currentStage++;
+                SceneManager.LoadScene(stageSceneName);
+            }
         }
         else
         {
-            // 게임오버 패널 켜기 & 3초 후 메인 메뉴 이동
             if (gameOverPanel != null) gameOverPanel.SetActive(true);
-            if (victoryPanel != null) victoryPanel.SetActive(false);
-
             yield return new WaitForSecondsRealtime(delayTime);
-
             Time.timeScale = 1f;
             SceneManager.LoadScene(mainMenuSceneName);
         }
@@ -243,7 +345,6 @@ public class MathProblemPaper : MonoBehaviour
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-
             var playerScript = FindFirstObjectByType<PlayerController>();
             if (playerScript != null) playerScript.enabled = true;
         }
@@ -251,7 +352,6 @@ public class MathProblemPaper : MonoBehaviour
         {
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-
             var playerScript = FindFirstObjectByType<PlayerController>();
             if (playerScript != null) playerScript.enabled = false;
         }

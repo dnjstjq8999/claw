@@ -8,6 +8,8 @@ public class TableCapsuleObject : MonoBehaviour, IPointerClickHandler
     public int capsuleNumber;
     public bool isEven;
     private bool isOpen = false;
+    private bool isInitialized = false;
+
     [Header("--- UI / ·»´õ¸µ Âü°í ---")]
     [SerializeField] private GameObject closedVisual;
     [SerializeField] private TextMeshPro numberText;
@@ -21,13 +23,16 @@ public class TableCapsuleObject : MonoBehaviour, IPointerClickHandler
     {
         isEven = even;
         capsuleNumber = num;
+        isInitialized = true;
+
         if (numberText != null) numberText.text = num.ToString();
     }
 
     private float lastClickTime = 0f;
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (isOpen) return;
+        if (!isInitialized || isOpen) return;
+
         float timeSinceLastClick = Time.time - lastClickTime;
         if (timeSinceLastClick < 0.3f)
         {

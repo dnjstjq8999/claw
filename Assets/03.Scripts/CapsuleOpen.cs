@@ -7,27 +7,40 @@ public class CapsuleOpen : MonoBehaviour
     [Header("캡슐 데이터")]
     public int capsuleNumber;
     public bool isEven;
+    private bool isInitialized = false; // 데이터 세팅 여부 확인용
 
     [Header("더블클릭 설정")]
     private float lastClickTime = 0f;
     private float doubleClickThreshold = 0.3f;
     private bool isInteracted = false;
 
+    void Awake()
+    {
+        // 처음 만들어졌을 때는 데이터가 없으므로 렌더러와 콜라이더를 확실히 끕니다.
+        MeshRenderer mr = GetComponent<MeshRenderer>();
+        if (mr != null) mr.enabled = false;
+
+        Collider col = GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+    }
+
     public void SetupCapsule(bool even, int num)
     {
         isEven = even;
         capsuleNumber = num;
         isInteracted = false;
+        isInitialized = true;
 
         MeshRenderer mr = GetComponent<MeshRenderer>();
         if (mr != null) mr.enabled = true;
+
         Collider col = GetComponent<Collider>();
         if (col != null) col.enabled = true;
     }
 
     public void OnPlayerClicked()
     {
-        if (isInteracted) return;
+        if (!isInitialized || isInteracted) return;
 
         float timeSinceLastClick = Time.time - lastClickTime;
 

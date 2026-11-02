@@ -75,13 +75,10 @@ public class DraggableNumberToText : MonoBehaviour
     {
         if (MathProblemPaper.Instance != null)
         {
-            Vector3 paperPos = MathProblemPaper.Instance.transform.position;
-            float distance = Vector3.Distance(new Vector3(transform.position.x, paperPos.y, transform.position.z), paperPos);
+            bool success = MathProblemPaper.Instance.TryDropNumberToNearestSlot(transform.position, myNumber, gameObject);
 
-            if (distance < 1.0f)
+            if (success)
             {
-                MathProblemPaper.Instance.SetPlayerAnswer(myNumber, originalPosition);
-                Destroy(gameObject);
                 return;
             }
         }

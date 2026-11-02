@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/01.Scenes/LoadingScene.unity
     guid: 73a32c4c2a665f446a999b3d78d1b4fd
   - enabled: 1
-    path: Assets/01.Scenes/Stage1.unity
+    path: Assets/01.Scenes/StageScene.unity
     guid: d7109fcef8b5b144fa3c6420a8c8c9a1
   - enabled: 1
     path: Assets/SCI-FI UI Pack Pro/SCI-FI UI Pack_V2 Pro(Cyan)/Scenes/Demo Scene

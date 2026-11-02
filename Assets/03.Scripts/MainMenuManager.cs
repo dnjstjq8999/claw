@@ -25,6 +25,11 @@ public class MainMenuManager : MonoBehaviour
     {
         PlayClickSound();
 
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.currentStage = 1;
+        }
+
         LoadingSceneController.nextSceneName = stage1SceneName;
         SceneManager.LoadScene("LoadingScene");
     }

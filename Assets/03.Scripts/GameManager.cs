@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     [Header("--- 게임 설정 (세팅창용 - PlayerPrefs) ---")]
     public float mouseSensitivity = 2.0f;
 
+    [Header("--- 스테이지 진행 상태 ---")]
+    public int currentStage = 1; // 기본 1스테이지 시작
+
     void Awake()
     {
         if (Instance == null)

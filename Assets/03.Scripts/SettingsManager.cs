@@ -36,13 +36,17 @@ public class SettingsManager : MonoBehaviour
         // 1. º¼·ý ÃÊ±âÈ­
         if (musicSlider != null)
         {
-            musicSlider.value = PlayerPrefs.GetFloat("BGMVolume", 0.8f);
+            float savedBgmVol = PlayerPrefs.GetFloat("BGMVolume", 0.8f);
+            musicSlider.value = savedBgmVol;
+            if (SoundManager.Instance != null) SoundManager.Instance.SetBGMVolume(savedBgmVol);
             musicSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
         }
 
         if (volumeSlider != null)
         {
-            volumeSlider.value = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
+            float savedSfxVol = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
+            volumeSlider.value = savedSfxVol;
+            if (SoundManager.Instance != null) SoundManager.Instance.SetSFXVolume(savedSfxVol);
             volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
         }
 

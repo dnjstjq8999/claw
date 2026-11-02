@@ -147,5 +147,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b41ecd274e00a0b40823fd40c16149bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CapsuleData
-  isEven: 0
   capsuleNumber: 0
+  isEven: 0

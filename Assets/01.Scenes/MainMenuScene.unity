@@ -2649,6 +2649,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CheatManager
   cheatCoinAmount: 10
+  stageSceneName: StageScene
+  mainMenuSceneName: MainMenuScene
 --- !u!4 &230930614
 Transform:
   m_ObjectHideFlags: 0
@@ -4089,6 +4091,7 @@ GameObject:
   - component: {fileID: 427230446}
   - component: {fileID: 427230445}
   - component: {fileID: 427230444}
+  - component: {fileID: 427230448}
   m_Layer: 0
   m_Name: SoundManager
   m_TagString: Untagged
@@ -4304,7 +4307,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundManager
   bgmSource: {fileID: 427230445}
   sfxSource: {fileID: 427230444}
-  defaultClickSFX: {fileID: 0}
+  mainMenuBGM: {fileID: 8300000, guid: aa89a5b0d1c28c24da103d2aed5837f6, type: 3}
+  stageBGM: {fileID: 8300000, guid: 96c3c3a92f8826843931e03debfa4407, type: 3}
+  mainMenuVolumeScale: 0.7
+  mainMenuSceneName: MainMenuScene
+  stageSceneName: StageScene
+  defaultClickSFX: {fileID: 8300000, guid: a79fbaad91a41624ba4e968c26b96c33, type: 3}
+  clawMoveSFX: {fileID: 8300000, guid: ef95733423337f949bc512cf0197cba9, type: 3}
 --- !u!4 &427230447
 Transform:
   m_ObjectHideFlags: 0
@@ -4320,6 +4329,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &427230448
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427230443}
+  m_Enabled: 1
 --- !u!1 &431923393
 GameObject:
   m_ObjectHideFlags: 0
@@ -6502,7 +6519,6 @@ GameObject:
   m_Component:
   - component: {fileID: 690773095}
   - component: {fileID: 690773094}
-  - component: {fileID: 690773093}
   - component: {fileID: 690773096}
   m_Layer: 0
   m_Name: Main Camera
@@ -6511,14 +6527,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &690773093
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690773092}
-  m_Enabled: 1
 --- !u!20 &690773094
 Camera:
   m_ObjectHideFlags: 0
@@ -7545,6 +7553,18 @@ MonoBehaviour:
       - m_Target: {fileID: 2119752338}
         m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
         m_MethodName: OnClickOptions
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 427230446}
+        m_TargetAssemblyTypeName: SoundManager, Assembly-CSharp
+        m_MethodName: PlayButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

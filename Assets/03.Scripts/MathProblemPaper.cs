@@ -18,6 +18,9 @@ public class MathProblemPaper : MonoBehaviour
     [Header("UI Reference")]
     [SerializeField] private ProblemUIGroup[] problemUIgroups;
 
+    [Header("--- 드롭 설정 ---")]
+    [SerializeField] private float dropDistanceThreshold = 2.5f;
+
     [Header("--- 결과 패널 ---")]
     [SerializeField] private GameObject victoryPanel;
     [SerializeField] private GameObject gameOverPanel;
@@ -108,58 +111,148 @@ public class MathProblemPaper : MonoBehaviour
 
     public void GenerateProblemsStrict(int currentStage)
     {
-        currentProblems.Clear();
+        bool isStageValid = false;
+        List<ProblemData> generatedList = new List<ProblemData>();
 
-        for (int i = 0; i < requiredProblemCount; i++)
+        // 스테이지 전체의 문제 조합이 기계의 숫자 보유량(최대 2개)을 만족할 때까지 세트를 다시 생성
+        while (!isStageValid)
         {
-            int num1 = 1, num2 = 1;
+            generatedList.Clear();
+            List<ProblemData> stageGeneratedProblems = new List<ProblemData>();
+            bool batchSuccess = true;
 
-            if (currentStage == 1)
+            for (int i = 0; i < requiredProblemCount; i++)
             {
-                do
+                int num1 = 1, num2 = 1;
+                int correctAnswer = 0;
+                bool isValid = false;
+                int safetyCounter = 0;
+
+                while (!isValid)
                 {
-                    num1 = Random.Range(1, 4);
-                    num2 = Random.Range(2, 4);
-                } while (num1 * num2 >= 10);
-            }
-            else if (currentStage == 2)
-            {
-                do
-                {
-                    num1 = Random.Range(6, 10);
-                    num2 = Random.Range(6, 10);
-                } while (num1 * num2 < 10 || num1 * num2 >= 100);
-            }
-            else if (currentStage >= 3 && currentStage <= 5)
-            {
-                do
-                {
-                    num1 = Random.Range(8, 20);
-                    num2 = Random.Range(8, 20);
-                } while (num1 * num2 < 10);
-            }
-            else if (currentStage >= 6 && currentStage <= 8)
-            {
-                do
-                {
-                    num1 = Random.Range(5, 12);
-                    num2 = Random.Range(5, 12);
-                } while (num1 * num2 < 10);
-            }
-            else
-            {
-                do
-                {
-                    num1 = Random.Range(6, 13);
-                    num2 = Random.Range(6, 13);
-                } while (num1 * num2 < 10);
+                    safetyCounter++;
+                    if (safetyCounter > 1000) { batchSuccess = false; break; }
+
+                    if (currentStage == 1)
+                    {
+                        num1 = Random.Range(1, 4);
+                        num2 = Random.Range(2, 4);
+                    }
+                    else if (currentStage == 2)
+                    {
+                        num1 = Random.Range(6, 10);
+                        num2 = Random.Range(6, 10);
+                    }
+                    else if (currentStage >= 3 && currentStage <= 5)
+                    {
+                        num1 = Random.Range(8, 20);
+                        num2 = Random.Range(8, 20);
+                    }
+                    else if (currentStage >= 6 && currentStage <= 8)
+                    {
+                        num1 = Random.Range(5, 12);
+                        num2 = Random.Range(5, 12);
+                    }
+                    else
+                    {
+                        num1 = Random.Range(6, 13);
+                        num2 = Random.Range(6, 13);
+                    }
+
+                    correctAnswer = num1 * num2;
+
+                    // 정답 내에 동일 숫자가 3개 이상 들어가는지 검사
+                    if (!CheckNumberFrequencyValid(correctAnswer)) continue;
+
+                    // 스테이지별 추가 조건 검사
+                    if (currentStage == 1 && correctAnswer >= 10) continue;
+                    if (currentStage == 2 && (correctAnswer < 10 || correctAnswer >= 100)) continue;
+                    if (currentStage >= 3 && correctAnswer < 10) continue;
+
+                    // 현재 스테이지 내 중복 문제 검사
+                    bool isDuplicate = false;
+                    foreach (var p in stageGeneratedProblems)
+                    {
+                        if ((p.operand1 == num1 && p.operand2 == num2) || (p.operand1 == num2 && p.operand2 == num1))
+                        {
+                            isDuplicate = true;
+                            break;
+                        }
+                    }
+
+                    if (isDuplicate) continue;
+
+                    isValid = true;
+                }
+
+                if (!batchSuccess) break;
+
+                ProblemData newProblem = new ProblemData(num1, num2);
+                stageGeneratedProblems.Add(newProblem);
             }
 
-            currentProblems.Add(new ProblemData(num1, num2));
+            if (batchSuccess)
+            {
+                // 스테이지 전체 문제들의 총 숫자 개수가 기계 보유량(각 숫자당 최대 2개)을 초과하는지 최종 검사
+                if (CheckStageTotalDigitFrequencyValid(stageGeneratedProblems))
+                {
+                    generatedList = stageGeneratedProblems;
+                    isStageValid = true;
+                }
+            }
         }
 
+        currentProblems = generatedList;
         UpdateAllProblemUI();
         SetGamePlayState(true);
+    }
+
+    // 개별 정답 숫자 내에 동일한 숫자가 3개 이상 들어오는지 체크
+    private bool CheckNumberFrequencyValid(int answer)
+    {
+        string answerStr = answer.ToString();
+        Dictionary<char, int> digitCounts = new Dictionary<char, int>();
+
+        foreach (char c in answerStr)
+        {
+            if (!digitCounts.ContainsKey(c))
+            {
+                digitCounts[c] = 0;
+            }
+            digitCounts[c]++;
+
+            if (digitCounts[c] >= 3)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 스테이지 전체 정답들을 모아 모든 숫자의 총 사용량이 2개를 넘지 않는지 검사하는 함수
+    private bool CheckStageTotalDigitFrequencyValid(List<ProblemData> problems)
+    {
+        Dictionary<char, int> totalDigitCounts = new Dictionary<char, int>();
+
+        foreach (var p in problems)
+        {
+            string answerStr = p.correctAnswer.ToString();
+            foreach (char c in answerStr)
+            {
+                if (!totalDigitCounts.ContainsKey(c))
+                {
+                    totalDigitCounts[c] = 0;
+                }
+                totalDigitCounts[c]++;
+
+                // 인형뽑기 기계에는 각 숫자가 2개씩 있으므로, 스테이지 전체에서 총 3개 이상 필요하면 무효
+                if (totalDigitCounts[c] > 2)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void UpdateAllProblemUI()
@@ -246,7 +339,7 @@ public class MathProblemPaper : MonoBehaviour
             }
         }
 
-        if (bestProblemIndex != -1 && bestSlotIndex != -1 && minDistance < 1.0f)
+        if (bestProblemIndex != -1 && bestSlotIndex != -1 && minDistance < dropDistanceThreshold)
         {
             var p = currentProblems[bestProblemIndex];
 

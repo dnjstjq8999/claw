@@ -13,6 +13,10 @@ public class ClawMachineController : MonoBehaviour
     [Header("--- 물리 잡기 시스템 연동 ---")]
     public ClawPhysicsGrip clawGrip;
 
+    [Header("--- 오디오 연동 ---")]
+    [Header("--- 인형뽑기 기계 효과음 ---")]
+    public AudioClip clawMoveSFX;
+
     [Header("--- 방향키 수평 이동 설정 (1~10레벨 업그레이드 연동) ---")]
     public float moveSpeed = 3f;
     private float baseMoveSpeed;
@@ -38,6 +42,8 @@ public class ClawMachineController : MonoBehaviour
     private Vector3[] fingerLocalAxes;
 
     private Rigidbody carriageRigidbody;
+
+    private bool isMovingLocally = false;
 
     void Start()
     {
@@ -96,6 +102,11 @@ public class ClawMachineController : MonoBehaviour
 
             if (Keyboard.current.spaceKey.wasPressedThisFrame)
             {
+                // 스페이스바를 누르고 시퀀스가 시작될 때 이동 중이던 소리 끄기
+                if (SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.StopClawSFX();
+                }
                 StartCoroutine(ClawSequenceRoutine());
             }
         }
@@ -124,30 +135,63 @@ public class ClawMachineController : MonoBehaviour
         float moveX = 0f;
         float moveZ = 0f;
 
-        if (Keyboard.current.upArrowKey.isPressed) moveZ -= 1f;
-        if (Keyboard.current.downArrowKey.isPressed) moveZ += 1f;
-        if (Keyboard.current.leftArrowKey.isPressed) moveX += 1f;
-        if (Keyboard.current.rightArrowKey.isPressed) moveX -= 1f;
+        bool isKeyPressed = false;
 
-        Vector3 moveDir = new Vector3(moveX, 0f, moveZ).normalized;
-        Vector3 newPos = carriageTransform.position + moveDir * moveSpeed * Time.deltaTime;
+        if (Keyboard.current.upArrowKey.isPressed) { moveZ -= 1f; isKeyPressed = true; }
+        if (Keyboard.current.downArrowKey.isPressed) { moveZ += 1f; isKeyPressed = true; }
+        if (Keyboard.current.leftArrowKey.isPressed) { moveX += 1f; isKeyPressed = true; }
+        if (Keyboard.current.rightArrowKey.isPressed) { moveX -= 1f; isKeyPressed = true; }
 
-        newPos.x = Mathf.Clamp(newPos.x, minBounds.x, maxBounds.x);
-        newPos.z = Mathf.Clamp(newPos.z, minBounds.y, maxBounds.y);
-
-        carriageTransform.position = newPos;
-
-        if (railTransform != null)
+        if (isKeyPressed)
         {
-            Vector3 railPos = railTransform.position;
-            railPos.z = newPos.z;
-            railTransform.position = railPos;
+            Vector3 moveDir = new Vector3(moveX, 0f, moveZ).normalized;
+            Vector3 newPos = carriageTransform.position + moveDir * moveSpeed * Time.deltaTime;
+
+            newPos.x = Mathf.Clamp(newPos.x, minBounds.x, maxBounds.x);
+            newPos.z = Mathf.Clamp(newPos.z, minBounds.y, maxBounds.y);
+
+            carriageTransform.position = newPos;
+
+            if (railTransform != null)
+            {
+                Vector3 railPos = railTransform.position;
+                railPos.z = newPos.z;
+                railTransform.position = railPos;
+            }
+
+            // 방향키를 누르며 움직이는 동안 기계음 재생
+            if (!isMovingLocally)
+            {
+                isMovingLocally = true;
+                if (SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.PlayClawMoveSFX();
+                }
+            }
+        }
+        else
+        {
+            // 키를 떼면 기계음 멈춤
+            if (isMovingLocally)
+            {
+                isMovingLocally = false;
+                if (SoundManager.Instance != null)
+                {
+                    SoundManager.Instance.StopClawSFX();
+                }
+            }
         }
     }
 
     IEnumerator ClawSequenceRoutine()
     {
         isOperating = true;
+
+        // 시퀀스 동작(하강, 상승, 복귀) 중에는 기계음 재생
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayClawMoveSFX();
+        }
 
         // 1단계: 내려가면서 집게 벌어지기
         Vector3 startLocalPos = initialClawLocalPos;
@@ -221,6 +265,12 @@ public class ClawMachineController : MonoBehaviour
         // 목적지 위치 보정
         if (carriageRigidbody != null) carriageRigidbody.MovePosition(initialCarriagePos);
         else carriageTransform.position = initialCarriagePos;
+
+        // 수령 위치 도착 후 이동 기계음 멈춤
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.StopClawSFX();
+        }
 
         // 5단계: 집게 벌려 공 떨어뜨리기
         yield return new WaitForSeconds(0.2f);

@@ -50,7 +50,9 @@ public class SettingsManager : MonoBehaviour
             volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
         }
 
-        // 2. 언어 초기화
+        // 2. 언어 초기화 (저장된 값 불러오기)
+        string savedLang = PlayerPrefs.GetString("SelectedLanguage", "EN");
+        currentLangIndex = (savedLang == "KO") ? 1 : 0;
         UpdateLanguageDisplay();
 
         // 3. 해상도 드롭다운 초기화 (모니터 지원 여부 체크 포함)
@@ -80,14 +82,9 @@ public class SettingsManager : MonoBehaviour
         // 6. 창모드 토글 초기화
         if (screenModeToggle != null)
         {
-            // PlayerPrefs에서 저장된 값 불러오기 (기본값 1 = 전체화면 켜짐)
             bool isFullScreen = PlayerPrefs.GetInt("IsFullScreen", 1) == 1;
             screenModeToggle.isOn = isFullScreen;
-
-            // 게임 시작 시 실제 화면 모드 적용
             ApplyScreenMode(isFullScreen);
-
-            // 토글 상태가 바뀔 때 실행될 함수 연결
             screenModeToggle.onValueChanged.AddListener(OnScreenModeChanged);
         }
     }
@@ -159,8 +156,20 @@ public class SettingsManager : MonoBehaviour
 
     private void UpdateLanguageDisplay()
     {
-        if (languageText != null) languageText.text = languages[currentLangIndex];
-        PlayerPrefs.SetInt("LanguageIndex", currentLangIndex);
+        if (languageText != null)
+        {
+            languageText.text = languages[currentLangIndex];
+        }
+
+        // 선택된 언어 저장 및 LocalizationManager 동기화
+        string langCode = (currentLangIndex == 1) ? "KO" : "EN";
+        PlayerPrefs.SetString("SelectedLanguage", langCode);
+        PlayerPrefs.Save();
+
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.currentLanguage = (currentLangIndex == 1) ? LocalizationManager.Language.KO : LocalizationManager.Language.EN;
+        }
     }
 
     public void OnResolutionChanged(int index)
@@ -192,7 +201,6 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetInt("FPSIndex", index);
     }
 
-    // 마우스 감도 변경 함수
     public void OnSensitivityChanged(float value)
     {
         if (GameManager.Instance != null)
@@ -206,8 +214,6 @@ public class SettingsManager : MonoBehaviour
     public void OnScreenModeChanged(bool isFullScreen)
     {
         ApplyScreenMode(isFullScreen);
-
-        // PlayerPrefs에 저장 (1: 전체화면, 0: 창모드)
         PlayerPrefs.SetInt("IsFullScreen", isFullScreen ? 1 : 0);
         PlayerPrefs.Save();
     }
@@ -216,13 +222,11 @@ public class SettingsManager : MonoBehaviour
     {
         if (isFullScreen)
         {
-            // 전체화면
             Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
             Screen.fullScreen = true;
         }
         else
         {
-            // 창모드
             Screen.fullScreenMode = FullScreenMode.Windowed;
             Screen.fullScreen = false;
         }

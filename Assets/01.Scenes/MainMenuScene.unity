@@ -5558,6 +5558,7 @@ GameObject:
   - component: {fileID: 547839985}
   - component: {fileID: 547839984}
   - component: {fileID: 547839983}
+  - component: {fileID: 547839986}
   m_Layer: 5
   m_Name: Text (TMP) (3)
   m_TagString: Untagged
@@ -5622,8 +5623,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
-  m_sharedMaterial: {fileID: -8262044034710385518, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
+  m_sharedMaterial: {fileID: -7096733029208100700, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5700,6 +5701,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 547839981}
   m_CullTransparentMesh: 0
+--- !u!114 &547839986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547839981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c388aa44aa598574fa91e90c00adb0e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
+  localizationKey: BTN_REINFORCE
 --- !u!1 &552010767 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2827947064034971344, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
@@ -8128,6 +8142,7 @@ GameObject:
   - component: {fileID: 863903521}
   - component: {fileID: 863903523}
   - component: {fileID: 863903522}
+  - component: {fileID: 863903524}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -8178,8 +8193,8 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4d0bb7337f597634b94b9005947e8e28, type: 2}
-  m_sharedMaterial: {fileID: 7503143391497007800, guid: 4d0bb7337f597634b94b9005947e8e28, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
+  m_sharedMaterial: {fileID: -7096733029208100700, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8256,6 +8271,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 863903520}
   m_CullTransparentMesh: 0
+--- !u!114 &863903524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863903520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c388aa44aa598574fa91e90c00adb0e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
+  localizationKey: TITLE_GAME
 --- !u!1 &914467933
 GameObject:
   m_ObjectHideFlags: 0
@@ -8268,6 +8296,7 @@ GameObject:
   - component: {fileID: 914467937}
   - component: {fileID: 914467936}
   - component: {fileID: 914467935}
+  - component: {fileID: 914467938}
   m_Layer: 5
   m_Name: Text (TMP) (2)
   m_TagString: Untagged
@@ -8330,8 +8359,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: SETTINGS
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
-  m_sharedMaterial: {fileID: -8262044034710385518, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
+  m_sharedMaterial: {fileID: -7096733029208100700, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8408,6 +8437,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 914467933}
   m_CullTransparentMesh: 0
+--- !u!114 &914467938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 914467933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c388aa44aa598574fa91e90c00adb0e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
+  localizationKey: BTN_SETTINGS
 --- !u!1 &919717881
 GameObject:
   m_ObjectHideFlags: 0
@@ -8420,6 +8462,7 @@ GameObject:
   - component: {fileID: 919717885}
   - component: {fileID: 919717884}
   - component: {fileID: 919717883}
+  - component: {fileID: 919717886}
   m_Layer: 5
   m_Name: Text (TMP) (4)
   m_TagString: Untagged
@@ -8482,8 +8525,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: QUIT GAME
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
-  m_sharedMaterial: {fileID: -8262044034710385518, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
+  m_sharedMaterial: {fileID: -7096733029208100700, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8560,6 +8603,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919717881}
   m_CullTransparentMesh: 0
+--- !u!114 &919717886
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919717881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c388aa44aa598574fa91e90c00adb0e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
+  localizationKey: BTN_QUIT
 --- !u!1 &922550869
 GameObject:
   m_ObjectHideFlags: 0
@@ -9130,6 +9186,7 @@ GameObject:
   - component: {fileID: 979654110}
   - component: {fileID: 979654112}
   - component: {fileID: 979654111}
+  - component: {fileID: 979654113}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -9178,8 +9235,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: START GAME
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
-  m_sharedMaterial: {fileID: -8262044034710385518, guid: a85a5fb20be32c74e8b4a078e736f5ab, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
+  m_sharedMaterial: {fileID: -7096733029208100700, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -9256,6 +9313,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 979654109}
   m_CullTransparentMesh: 0
+--- !u!114 &979654113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 979654109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c388aa44aa598574fa91e90c00adb0e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
+  localizationKey: BTN_START
 --- !u!1 &999402476
 GameObject:
   m_ObjectHideFlags: 0
@@ -11079,6 +11149,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1384128630}
   - component: {fileID: 1384128629}
+  - component: {fileID: 1384128631}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -11121,6 +11192,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1384128631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1384128628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31c474dc2434e58458979c1e80a3dd3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizationManager
+  currentLanguage: 1
 --- !u!1 &1419315935
 GameObject:
   m_ObjectHideFlags: 0
@@ -14208,6 +14292,34 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2421011321811480832, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2421011321811480832, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2421011321811480832, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1384128631}
+    - target: {fileID: 2421011321811480832, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2421011321811480832, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ToggleLanguage
+      objectReference: {fileID: 0}
+    - target: {fileID: 2421011321811480832, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: LocalizationManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2421011321811480832, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 2827947064034971344, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
       propertyPath: m_Name
       value: SettingsPanel
@@ -14215,6 +14327,22 @@ PrefabInstance:
     - target: {fileID: 2827947064034971344, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201890922272468246, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1384128631}
+    - target: {fileID: 3201890922272468246, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: ToggleLanguage
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201890922272468246, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: LocalizationManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3201890922272468246, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 4752355801042622476, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
       propertyPath: m_AnchorMax.x
@@ -14243,6 +14371,22 @@ PrefabInstance:
     - target: {fileID: 7673508352647727509, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7831715120500381931, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 1f407a446ed624a41bddcc58e92fb545, type: 2}
+    - target: {fileID: 7831715120500381931, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    - target: {fileID: 7831715120500381931, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8055202026203093808, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
+      propertyPath: localizationKey
+      value: LABEL_CURRENT_LANG
       objectReference: {fileID: 0}
     - target: {fileID: 8736848127113928119, guid: 2560e766ca0cbad4395a49ab1b2a5433, type: 3}
       propertyPath: m_AnchorMax.x

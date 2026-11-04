@@ -11,7 +11,7 @@ public class SettingsManager : MonoBehaviour
 
     [Header("--- 언어 설정 ---")]
     public TMP_Text languageText;
-    private string[] languages = { "English", "한국어" };
+    private string[] languages = { "ENGLISH", "한국어" };
     private int currentLangIndex = 0;
 
     [Header("--- 해상도 설정 (드롭다운) ---")]
@@ -53,7 +53,12 @@ public class SettingsManager : MonoBehaviour
         // 2. 언어 초기화 (저장된 값 불러오기)
         string savedLang = PlayerPrefs.GetString("SelectedLanguage", "EN");
         currentLangIndex = (savedLang == "KO") ? 1 : 0;
-        UpdateLanguageDisplay();
+
+        // 초기화 시점에는 텍스트 표시와 매니저 상태만 맞추고, 이벤트 중복 호출 방지
+        if (languageText != null)
+        {
+            languageText.text = languages[currentLangIndex];
+        }
 
         // 3. 해상도 드롭다운 초기화 (모니터 지원 여부 체크 포함)
         InitResolutions();
@@ -161,14 +166,17 @@ public class SettingsManager : MonoBehaviour
             languageText.text = languages[currentLangIndex];
         }
 
-        // 선택된 언어 저장 및 LocalizationManager 동기화
-        string langCode = (currentLangIndex == 1) ? "KO" : "EN";
-        PlayerPrefs.SetString("SelectedLanguage", langCode);
-        PlayerPrefs.Save();
+        // 선택된 언어 결정 후 LocalizationManager의 ChangeLanguage 호출 (이벤트 발생)
+        LocalizationManager.Language newLang = (currentLangIndex == 1) ? LocalizationManager.Language.KO : LocalizationManager.Language.EN;
 
         if (LocalizationManager.Instance != null)
         {
-            LocalizationManager.Instance.currentLanguage = (currentLangIndex == 1) ? LocalizationManager.Language.KO : LocalizationManager.Language.EN;
+            LocalizationManager.Instance.ChangeLanguage(newLang);
+        }
+        else
+        {
+            PlayerPrefs.SetString("SelectedLanguage", (currentLangIndex == 1) ? "KO" : "EN");
+            PlayerPrefs.Save();
         }
     }
 

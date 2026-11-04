@@ -58,6 +58,8 @@ public class SoundManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        StopSFX();
+
         if (scene.name == mainMenuSceneName)
         {
             PlayBGM(mainMenuBGM, true);
@@ -116,6 +118,17 @@ public class SoundManager : MonoBehaviour
         sfxSource.PlayOneShot(clip);
     }
 
+    // 모든 효과음(루프 포함)을 즉시 정지하는 함수
+    public void StopSFX()
+    {
+        if (sfxSource != null)
+        {
+            sfxSource.Stop();
+            sfxSource.loop = false;
+            sfxSource.clip = null;
+        }
+    }
+
     public void PlayButtonClick()
     {
         if (defaultClickSFX != null)
@@ -142,6 +155,7 @@ public class SoundManager : MonoBehaviour
         {
             sfxSource.Stop();
             sfxSource.loop = false;
+            sfxSource.clip = null;
         }
     }
 

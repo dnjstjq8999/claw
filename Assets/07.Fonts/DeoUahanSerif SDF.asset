@@ -196,7 +196,7 @@ MonoBehaviour:
     sourceFontFileName: 
     sourceFontFileGUID: a5ef909b9848ac346af631205d406405
     faceIndex: 0
-    pointSizeSamplingMode: 0
+    pointSizeSamplingMode: 1
     pointSize: 64
     padding: 5
     paddingMode: 2

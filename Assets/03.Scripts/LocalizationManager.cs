@@ -85,6 +85,12 @@ public class LocalizationManager : MonoBehaviour
         { "HELP_GOAL_TITLE", ("■ 게임 목표", "■ GAME GOAL") },
         { "HELP_GOAL_DESC", ("\n· 1단계부터 10단계까지 모두 돌파하여 최종 엔딩을 맞이하세요!", "\n· Conquer all stages from Stage 1 to Stage 10 and reach the final ending!") },
 
+        // 로딩 팁 텍스트 매핑
+        { "TIP_1", ("팁: 스테이지를 클리어하여 더 많은 캡슐을 모아보세요! 뽑은 캡슐들로 업그레이드를 할 수 있습니다.", "Tip: Clear stages to collect more capsules! You can use them to upgrade your gear.") },
+        { "TIP_2", ("팁: 공이 정확히 어디있는지 모르겠을땐 알트키(화면전환)을 활용해 보세요!", "Tip: Having trouble finding where the ball is? Press the Alt key to switch camera views!") },
+        { "TIP_3", ("팁: 구석이나 끝에 있어서 안 뽑힌다고요? Z키(발차기)를 활용해 보세요!", "Tip: Struggling to reach items stuck in the corners? Try using the Z key (kick)!") },
+        { "TIP_DEFAULT", ("팁: 즐거운 게임 되세요!", "Tip: Enjoy the game!") },
+
         { "LABEL_CURRENT_LANG", ("한국어", "ENGLISH") }
     };
 

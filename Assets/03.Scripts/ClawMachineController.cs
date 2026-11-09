@@ -45,6 +45,26 @@ public class ClawMachineController : MonoBehaviour
 
     private bool isMovingLocally = false;
 
+    void OnEnable()
+    {
+        // 인형뽑기 화면/오브젝트가 활성화되는 순간 플레이어 이동을 차단 상태로 고정
+        var pauseCtrl = FindFirstObjectByType<PauseMenuController>();
+        if (pauseCtrl != null)
+        {
+            pauseCtrl.isClawGameActive = true;
+        }
+    }
+
+    void OnDisable()
+    {
+        // 인형뽑기 화면/오브젝트가 꺼질 때 원래대로 복구
+        var pauseCtrl = FindFirstObjectByType<PauseMenuController>();
+        if (pauseCtrl != null)
+        {
+            pauseCtrl.isClawGameActive = false;
+        }
+    }
+
     void Start()
     {
         baseMoveSpeed = moveSpeed;

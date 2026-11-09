@@ -9,6 +9,8 @@ public class PauseMenuController : MonoBehaviour
 
     private bool isPaused = false;
 
+    [HideInInspector] public bool isClawGameActive = false;
+
     void Start()
     {
         if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
@@ -58,7 +60,13 @@ public class PauseMenuController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         var playerScript = FindFirstObjectByType<PlayerController>();
-        if (playerScript != null) playerScript.enabled = true;
+        if (playerScript != null)
+        {
+            if (!isClawGameActive)
+            {
+                playerScript.enabled = true;
+            }
+        }
     }
 
     public void OpenSettings()

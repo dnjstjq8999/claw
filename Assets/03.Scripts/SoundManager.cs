@@ -25,6 +25,9 @@ public class SoundManager : MonoBehaviour
     public AudioClip defaultClickSFX;
     public AudioClip clawMoveSFX; // ÀÎÇü»Ì±â ±â°è ÀÛµ¿À½
 
+    [Header("--- Ä¸½¶ »Ì±â(È¹µæ) È¿°úÀ½ ---")]
+    public AudioClip capsuleGrabSFX;
+
     private float baseBgmVolume = 1.0f;
 
     private void Awake()
@@ -156,6 +159,14 @@ public class SoundManager : MonoBehaviour
             sfxSource.Stop();
             sfxSource.loop = false;
             sfxSource.clip = null;
+        }
+    }
+
+    public void PlayCapsuleGrabSFX()
+    {
+        if (capsuleGrabSFX != null)
+        {
+            PlaySFX(capsuleGrabSFX);
         }
     }
 

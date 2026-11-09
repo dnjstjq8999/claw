@@ -10,6 +10,7 @@ public class MainMenuManager : MonoBehaviour
     public GameObject homePanel;
     public GameObject optionsPanel;
     public GameObject reinforcePanel;
+    public GameObject helpPanel; //
 
     [Header("--- 사운드 설정 ---")]
     public AudioSource audioSource;
@@ -19,6 +20,7 @@ public class MainMenuManager : MonoBehaviour
     {
         if (optionsPanel != null) optionsPanel.SetActive(false);
         if (reinforcePanel != null) reinforcePanel.SetActive(false);
+        if (helpPanel != null) helpPanel.SetActive(false);
     }
 
     public void OnClickStartGame()
@@ -50,6 +52,15 @@ public class MainMenuManager : MonoBehaviour
         if (reinforcePanel != null)
         {
             reinforcePanel.SetActive(true);
+        }
+    }
+
+    public void OnClickHelp()
+    {
+        PlayClickSound();
+        if (helpPanel != null)
+        {
+            helpPanel.SetActive(true);
         }
     }
 

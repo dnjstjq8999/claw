@@ -12,6 +12,10 @@ public class GoalArea : MonoBehaviour
 
         if (capsule != null)
         {
+            if (SoundManager.Instance != null)
+            {
+                SoundManager.Instance.PlayCapsuleGrabSFX();
+            }
 
             if (StageUIManager.Instance != null)
             {

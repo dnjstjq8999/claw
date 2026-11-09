@@ -25,6 +25,7 @@ public class LocalizationManager : MonoBehaviour
         { "BTN_START", ("게임 시작", "START GAME") },
         { "BTN_SETTINGS", ("설정", "SETTINGS") },
         { "BTN_REINFORCE", ("강화", "REINFORCE") },
+        { "BTN_HOW_TO_PLAY", ("게임 방법", "HOW TO PLAY") },
         { "BTN_QUIT", ("게임 종료", "QUIT GAME") },
 
         // 설정창 라벨 매핑
@@ -68,6 +69,21 @@ public class LocalizationManager : MonoBehaviour
         // 상호작용 UI 매핑
         { "INTERACT_PLAY", ("[E] 뽑기", "[E] PLAY") },
         { "INTERACT_SUBMIT", ("[E] 채점", "[E] SUBMIT") },
+
+        // 도움말 (HOW TO PLAY) UI 매핑
+        { "TITLE_HOW_TO_PLAY", ("게임 방법", "HOW TO PLAY") },
+
+        { "HELP_CONTROLS_TITLE", ("■ 조작 방법", "■ CONTROLS") },
+        { "HELP_CONTROLS_DESC", ("\n· 캐릭터 이동 : WASD\n· 시점 조작 : 마우스 이동\n· 상호작용 : E 키\n· 일시정지 / 설정 : ESC 키", "\n· Character Move : WASD\n· Camera Look : Mouse Move\n· Interaction : E Key\n· Pause / Settings : ESC Key") },
+
+        { "HELP_MISSION_TITLE", ("■ 인형뽑기 & 미션 조작", "■ CLAW MACHINE & MISSION") },
+        { "HELP_MISSION_DESC", ("\n· 크레인 이동 : 방향키 (상, 하, 좌, 우)\n· 집게 내리기 : 스페이스바 (Space)\n· 인형뽑기 흔들기(발차기) : Z 키\n· 사이드 화면 전환 : ALT 키 (누르는 동안)\n· 캡슐 오픈 : 더블 클릭 / 숫자 입력 : 마우스 드래그", "\n· Move Crane : Arrow Keys (Up, Down, Left, Right)\n· Drop Claw : Spacebar\n· Shake Claw (Kick) : Z Key\n· Switch Side View : ALT Key (Hold)\n· Open Capsule : Double Click / Input Numbers : Mouse Drag") },
+
+        { "HELP_RULES_TITLE", ("■ 정답 제출 및 진행 규칙", "■ SUBMISSION & RULES") },
+        { "HELP_RULES_DESC", ("\n· 정답 입력 후 [책상에 있는 버튼]을 눌러 제출하세요!\n· 정답 맞춤 : 다음 스테이지로 진입!\n· 오답 또는 시간 초과 : 초기화 (재도전!)", "\n· Enter the answer and press the [Desk Button] to submit!\n· Correct Answer : Proceed to the Next Stage!\n· Wrong Answer or Time Over : Reset (Retry!)") },
+
+        { "HELP_GOAL_TITLE", ("■ 게임 목표", "■ GAME GOAL") },
+        { "HELP_GOAL_DESC", ("\n· 1단계부터 10단계까지 모두 돌파하여 최종 엔딩을 맞이하세요!", "\n· Conquer all stages from Stage 1 to Stage 10 and reach the final ending!") },
 
         { "LABEL_CURRENT_LANG", ("한국어", "ENGLISH") }
     };

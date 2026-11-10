@@ -60,13 +60,24 @@ public class DraggableNumberToText : MonoBehaviour
             if (targetPlane.Raycast(ray, out enter))
             {
                 Vector3 hitPoint = ray.GetPoint(enter);
-                transform.position = hitPoint + new Vector3(0, 0.15f, 0);
+                transform.position = hitPoint;
+
+                if (MathProblemPaper.Instance != null)
+                {
+                    MathProblemPaper.Instance.UpdateDragPreview(transform.position);
+                }
             }
         }
 
         if (isDragging && Mouse.current.leftButton.wasReleasedThisFrame)
         {
             isDragging = false;
+
+            if (MathProblemPaper.Instance != null)
+            {
+                MathProblemPaper.Instance.ClearDragPreview();
+            }
+
             CheckDropZone();
         }
     }

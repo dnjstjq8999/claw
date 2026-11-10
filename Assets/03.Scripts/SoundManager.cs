@@ -13,13 +13,16 @@ public class SoundManager : MonoBehaviour
     [Header("--- 배경음악 클립 ---")]
     public AudioClip mainMenuBGM;
     public AudioClip stageBGM;
+    public AudioClip endingBGM;
 
     [Header("--- 배경음악 개별 볼륨 배율 ---")]
     [Range(0f, 1f)] public float mainMenuVolumeScale = 0.8f;
+    [Range(0f, 1f)] public float endingVolumeScale = 1.0f;
 
     [Header("--- 씬 이름 설정 ---")]
     [SerializeField] private string mainMenuSceneName = "MainMenuScene";
     [SerializeField] private string stageSceneName = "StageScene";
+    [SerializeField] private string endingSceneName = "EndingScene";
 
     [Header("--- 기본 효과음 및 기계음 ---")]
     public AudioClip defaultClickSFX;
@@ -63,6 +66,7 @@ public class SoundManager : MonoBehaviour
     {
         StopSFX();
 
+        // 씬 이름에 따라 알맞은 BGM 재생
         if (scene.name == mainMenuSceneName)
         {
             PlayBGM(mainMenuBGM, true);
@@ -70,6 +74,10 @@ public class SoundManager : MonoBehaviour
         else if (scene.name == stageSceneName)
         {
             PlayBGM(stageBGM, true);
+        }
+        else if (scene.name == endingSceneName)
+        {
+            PlayBGM(endingBGM, true);
         }
 
         RegisterAllButtons();
@@ -106,7 +114,10 @@ public class SoundManager : MonoBehaviour
     {
         if (bgmSource == null) return;
 
-        float scale = (bgmSource.clip == mainMenuBGM) ? mainMenuVolumeScale : 1.0f;
+        float scale = 1.0f;
+        if (bgmSource.clip == mainMenuBGM) scale = mainMenuVolumeScale;
+        else if (bgmSource.clip == endingBGM) scale = endingVolumeScale;
+
         bgmSource.volume = baseBgmVolume * scale;
     }
 

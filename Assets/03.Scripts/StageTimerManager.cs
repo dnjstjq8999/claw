@@ -9,11 +9,11 @@ public class StageTimerManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private GameObject gameOverPanel;
 
-    [Header("--- 시간 설정 (1~10레벨 업그레이드 연동) ---")]
+    [Header("--- 시간 설정 (업그레이드 연동) ---")]
     [SerializeField] private float baseTimeLimit = 60f;
     [SerializeField] private float extraTimePerLevel = 10f;
     public int minLevel = 1;
-    public int maxLevel = 10;
+    public int maxLevel = 15;
 
     private float currentTime;
     private bool isGameOver = false;
@@ -35,8 +35,6 @@ public class StageTimerManager : MonoBehaviour
             timeLevel = Mathf.Clamp(timeLevel, minLevel, maxLevel);
 
             extraTime = (timeLevel - minLevel) * extraTimePerLevel;
-
-            Debug.Log($"[시간 업그레이드 연동] 시간 레벨: {timeLevel}, 추가된 시간: {extraTime}초 (총 {baseTimeLimit + extraTime}초)");
         }
 
         currentTime = baseTimeLimit + extraTime;
@@ -73,7 +71,6 @@ public class StageTimerManager : MonoBehaviour
     private void TriggerGameOver()
     {
         isGameOver = true;
-        Debug.Log("[게임오버] 시간이 종료되었습니다!");
 
         if (gameOverPanel != null)
         {

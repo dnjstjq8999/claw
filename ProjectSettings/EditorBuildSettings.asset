@@ -15,9 +15,8 @@ EditorBuildSettings:
     path: Assets/01.Scenes/StageScene.unity
     guid: d7109fcef8b5b144fa3c6420a8c8c9a1
   - enabled: 1
-    path: Assets/SCI-FI UI Pack Pro/SCI-FI UI Pack_V2 Pro(Cyan)/Scenes/Demo Scene
-      V2(Cyan).unity
-    guid: d10fc73de2ae45049a21def3b70c0847
+    path: Assets/01.Scenes/EndingScene.unity
+    guid: e71d86d9cb534ac4ba2a43948e81fecf
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

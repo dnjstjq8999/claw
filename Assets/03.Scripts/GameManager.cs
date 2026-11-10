@@ -1,4 +1,8 @@
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -25,6 +29,11 @@ public class GameManager : MonoBehaviour
 
             // 플레이어프랩스에서 마우스 감도 불러오기
             mouseSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 2.0f);
+
+            // 저장된 FPS 불러와서 적용하기 (기본값 60)
+            int savedFPS = PlayerPrefs.GetInt("UserSelectedFPS", 60);
+            Application.targetFrameRate = savedFPS;
+            QualitySettings.vSyncCount = 0;
         }
         else
         {
@@ -76,9 +85,10 @@ public class GameManager : MonoBehaviour
         return Mathf.Lerp(minY, maxY, ratio);
     }
 
-    // 4. 추가 시간 (1레벨당 10초씩 증가, 10레벨 시 150초)
+    // 4. 총 제한 시간 (기본 60초 + 1레벨당 10초씩 증가, 15레벨 시 200초)
     public float GetExtraTime()
     {
-        return (currentData.timeLimitLevel - 1) * 10f;
+        float baseTime = 60f; // 기본 스테이지 시간
+        return baseTime + (currentData.timeLimitLevel - 1) * 10f;
     }
 }

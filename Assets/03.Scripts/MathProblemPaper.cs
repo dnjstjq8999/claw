@@ -18,9 +18,6 @@ public class MathProblemPaper : MonoBehaviour
     [Header("UI Reference")]
     [SerializeField] private ProblemUIGroup[] problemUIgroups;
 
-    [Header("--- 드롭 설정 ---")]
-    [SerializeField] private float dropDistanceThreshold = 2.5f;
-
     [Header("--- 결과 패널 ---")]
     [SerializeField] private GameObject victoryPanel;
     [SerializeField] private GameObject gameOverPanel;
@@ -40,7 +37,7 @@ public class MathProblemPaper : MonoBehaviour
         public int operand2;
         public int correctAnswer;
         public int?[] slots;
-        public GameObject[] slotPlacedObjects; // 슬롯에 들어간 실제 오브젝트 저장
+        public GameObject[] slotPlacedObjects;
 
         public ProblemData(int a, int b)
         {
@@ -85,6 +82,9 @@ public class MathProblemPaper : MonoBehaviour
     [SerializeField] private List<ProblemData> currentProblems = new List<ProblemData>();
     private int requiredProblemCount = 1;
 
+    private int previewProblemIndex = -1;
+    private int previewSlotIndex = -1;
+
     void Awake()
     {
         if (Instance == null) Instance = this;
@@ -114,7 +114,6 @@ public class MathProblemPaper : MonoBehaviour
         bool isStageValid = false;
         List<ProblemData> generatedList = new List<ProblemData>();
 
-        // 스테이지 전체의 문제 조합이 기계의 숫자 보유량(최대 2개)을 만족할 때까지 세트를 다시 생성
         while (!isStageValid)
         {
             generatedList.Clear();
@@ -161,15 +160,12 @@ public class MathProblemPaper : MonoBehaviour
 
                     correctAnswer = num1 * num2;
 
-                    // 정답 내에 동일 숫자가 3개 이상 들어가는지 검사
                     if (!CheckNumberFrequencyValid(correctAnswer)) continue;
 
-                    // 스테이지별 추가 조건 검사
                     if (currentStage == 1 && correctAnswer >= 10) continue;
                     if (currentStage == 2 && (correctAnswer < 10 || correctAnswer >= 100)) continue;
                     if (currentStage >= 3 && correctAnswer < 10) continue;
 
-                    // 현재 스테이지 내 중복 문제 검사
                     bool isDuplicate = false;
                     foreach (var p in stageGeneratedProblems)
                     {
@@ -193,7 +189,6 @@ public class MathProblemPaper : MonoBehaviour
 
             if (batchSuccess)
             {
-                // 스테이지 전체 문제들의 총 숫자 개수가 기계 보유량(각 숫자당 최대 2개)을 초과하는지 최종 검사
                 if (CheckStageTotalDigitFrequencyValid(stageGeneratedProblems))
                 {
                     generatedList = stageGeneratedProblems;
@@ -207,7 +202,6 @@ public class MathProblemPaper : MonoBehaviour
         SetGamePlayState(true);
     }
 
-    // 개별 정답 숫자 내에 동일한 숫자가 3개 이상 들어오는지 체크
     private bool CheckNumberFrequencyValid(int answer)
     {
         string answerStr = answer.ToString();
@@ -229,7 +223,6 @@ public class MathProblemPaper : MonoBehaviour
         return true;
     }
 
-    // 스테이지 전체 정답들을 모아 모든 숫자의 총 사용량이 2개를 넘지 않는지 검사하는 함수
     private bool CheckStageTotalDigitFrequencyValid(List<ProblemData> problems)
     {
         Dictionary<char, int> totalDigitCounts = new Dictionary<char, int>();
@@ -245,7 +238,6 @@ public class MathProblemPaper : MonoBehaviour
                 }
                 totalDigitCounts[c]++;
 
-                // 인형뽑기 기계에는 각 숫자가 2개씩 있으므로, 스테이지 전체에서 총 3개 이상 필요하면 무효
                 if (totalDigitCounts[c] > 2)
                 {
                     return false;
@@ -281,7 +273,11 @@ public class MathProblemPaper : MonoBehaviour
                         group.slotTexts[d].fontSize = 14f;
                         group.slotTexts[d].textWrappingMode = TextWrappingModes.NoWrap;
 
-                        if (p.slots[d].HasValue)
+                        if (i == previewProblemIndex && d == previewSlotIndex)
+                        {
+                            group.slotTexts[d].text = "<color=red><b>?</b></color>";
+                        }
+                        else if (p.slots[d].HasValue)
                         {
                             group.slotTexts[d].text = $"<color=red>{p.slots[d].Value}</color>";
                         }
@@ -310,11 +306,16 @@ public class MathProblemPaper : MonoBehaviour
         }
     }
 
-    public bool TryDropNumberToNearestSlot(Vector3 dropPosition, int number, GameObject draggedObject)
+    // ?? 3D 거리 계산 대신 UI RectTransform 영역(ScreenPoint) 포함 여부로 변경
+    public void UpdateDragPreview(Vector3 currentPosition)
     {
         int bestProblemIndex = -1;
         int bestSlotIndex = -1;
-        float minDistance = float.MaxValue;
+        Camera cam = Camera.main;
+        if (cam == null) return;
+
+        // 드래그 중인 오브젝트의 월드 좌표를 화면 스크린 좌표로 변환
+        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(cam, currentPosition);
 
         for (int i = 0; i < currentProblems.Count; i++)
         {
@@ -327,19 +328,82 @@ public class MathProblemPaper : MonoBehaviour
                 if (d >= group.slotTexts.Length || group.slotTexts[d] == null) continue;
                 if (!group.slotTexts[d].gameObject.activeSelf) continue;
 
-                Vector3 slotWorldPos = group.slotTexts[d].transform.position;
-                float dist = Vector3.Distance(dropPosition, slotWorldPos);
-
-                if (dist < minDistance)
+                RectTransform rectTransform = group.slotTexts[d].GetComponent<RectTransform>();
+                if (rectTransform != null)
                 {
-                    minDistance = dist;
-                    bestProblemIndex = i;
-                    bestSlotIndex = d;
+                    // 슬롯 UI의 사각형 영역 안에 마우스/숫자의 스크린 좌표가 포함되는지 검사 (약간의 여유 패딩 30픽셀 부여 가능)
+                    if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPos, cam))
+                    {
+                        bestProblemIndex = i;
+                        bestSlotIndex = d;
+                        break; // 정확히 들어온 슬롯을 찾으면 즉시 중단
+                    }
                 }
             }
+            if (bestProblemIndex != -1) break;
         }
 
-        if (bestProblemIndex != -1 && bestSlotIndex != -1 && minDistance < dropDistanceThreshold)
+        if (bestProblemIndex != -1 && bestSlotIndex != -1)
+        {
+            if (previewProblemIndex != bestProblemIndex || previewSlotIndex != bestSlotIndex)
+            {
+                previewProblemIndex = bestProblemIndex;
+                previewSlotIndex = bestSlotIndex;
+                UpdateAllProblemUI();
+            }
+        }
+        else
+        {
+            ClearDragPreview();
+        }
+    }
+
+    public void ClearDragPreview()
+    {
+        if (previewProblemIndex != -1 || previewSlotIndex != -1)
+        {
+            previewProblemIndex = -1;
+            previewSlotIndex = -1;
+            UpdateAllProblemUI();
+        }
+    }
+
+    public bool TryDropNumberToNearestSlot(Vector3 dropPosition, int number, GameObject draggedObject)
+    {
+        int bestProblemIndex = -1;
+        int bestSlotIndex = -1;
+        Camera cam = Camera.main;
+        if (cam == null) return false;
+
+        Vector2 dropScreenPos = RectTransformUtility.WorldToScreenPoint(cam, dropPosition);
+        ClearDragPreview();
+
+        for (int i = 0; i < currentProblems.Count; i++)
+        {
+            if (i >= problemUIgroups.Length) break;
+            var group = problemUIgroups[i];
+            var p = currentProblems[i];
+
+            for (int d = 0; d < p.slots.Length; d++)
+            {
+                if (d >= group.slotTexts.Length || group.slotTexts[d] == null) continue;
+                if (!group.slotTexts[d].gameObject.activeSelf) continue;
+
+                RectTransform rectTransform = group.slotTexts[d].GetComponent<RectTransform>();
+                if (rectTransform != null)
+                {
+                    if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, dropScreenPos, cam))
+                    {
+                        bestProblemIndex = i;
+                        bestSlotIndex = d;
+                        break;
+                    }
+                }
+            }
+            if (bestProblemIndex != -1) break;
+        }
+
+        if (bestProblemIndex != -1 && bestSlotIndex != -1)
         {
             var p = currentProblems[bestProblemIndex];
 
@@ -415,7 +479,7 @@ public class MathProblemPaper : MonoBehaviour
 
             if (GameManager.Instance.currentStage >= 10)
             {
-                SceneManager.LoadScene(mainMenuSceneName);
+                SceneManager.LoadScene("EndingScene");
             }
             else
             {

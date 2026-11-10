@@ -91,6 +91,10 @@ public class LocalizationManager : MonoBehaviour
         { "TIP_3", ("팁: 구석이나 끝에 있어서 안 뽑힌다고요? Z키(발차기)를 활용해 보세요!", "Tip: Struggling to reach items stuck in the corners? Try using the Z key (kick)!") },
         { "TIP_DEFAULT", ("팁: 즐거운 게임 되세요!", "Tip: Enjoy the game!") },
 
+        // 엔딩 씬 UI 매핑
+        { "ENDING_TITLE", ("축하합니다!", "CONGRATULATIONS!") },
+        { "ENDING_CLICK", ("화면을 클릭하여 메인 메뉴로", "Click to main menu") },
+
         { "LABEL_CURRENT_LANG", ("한국어", "ENGLISH") }
     };
 

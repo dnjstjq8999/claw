@@ -14,12 +14,17 @@ public class ReinforceManager : MonoBehaviour
     [Header("--- 각 패널별 텍스트 연결 (4개 크기로 설정) ---")]
     [SerializeField] private TextMeshProUGUI[] currentLevelTextArray; // Current Level 표시용 텍스트 배열
     [SerializeField] private TextMeshProUGUI[] nowTextArray;          // Now 옆 텍스트 (현재 능력치)
-    [SerializeField] private TextMeshProUGUI[] nextTextArray;         // Next 옆 텍스트 (다음 능력치)
-    [SerializeField] private TextMeshProUGUI[] requiredTextArray;     // Required Capsules 옆 텍스트 (필요 공 개수)
+    [SerializeField] private TextMeshProUGUI[] nextTextArray;          // Next 옆 텍스트 (다음 능력치)
+    [SerializeField] private TextMeshProUGUI[] requiredTextArray;      // Required Capsules 옆 텍스트 (필요 공 개수)
 
     [Header("--- 강화 밸런스 설정 ---")]
-    [SerializeField] private int maxLevel = 10;
     [SerializeField] private int baseCost = 5;
+
+    // 항목별 최대 레벨 반환 (0~2번은 10레벨, 3번 시간 강화만 15레벨)
+    private int GetMaxLevel(int index)
+    {
+        return (index == 3) ? 15 : 10;
+    }
 
     private void Start()
     {
@@ -43,12 +48,13 @@ public class ReinforceManager : MonoBehaviour
         for (int i = 0; i < upgradePanels.Length; i++)
         {
             int currentLevel = GetLevel(i);
-            bool isMax = (currentLevel >= maxLevel);
+            int maxLv = GetMaxLevel(i);
+            bool isMax = (currentLevel >= maxLv);
 
             // Current Level 텍스트 업데이트
             if (currentLevelTextArray != null && i < currentLevelTextArray.Length && currentLevelTextArray[i] != null)
             {
-                currentLevelTextArray[i].text = $"Current Level : {currentLevel}";
+                currentLevelTextArray[i].text = $"Current Level : {currentLevel} / {maxLv}";
             }
 
             // Now 텍스트 업데이트
@@ -100,7 +106,7 @@ public class ReinforceManager : MonoBehaviour
                 {
                     return $"Skill Lv.{level}";
                 }
-            case 3: // 3번: 시간 강화
+            case 3: // 3번: 시간 강화 (1레벨당 +10초)
                 {
                     float extraTime = (level - 1) * 10f;
                     return $"+{extraTime}s";
@@ -129,7 +135,8 @@ public class ReinforceManager : MonoBehaviour
         if (GameManager.Instance == null) return;
 
         int currentLevel = GetLevel(index);
-        if (currentLevel >= maxLevel) return;
+        int maxLv = GetMaxLevel(index);
+        if (currentLevel >= maxLv) return;
 
         int cost = baseCost + (currentLevel - 1);
 

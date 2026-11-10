@@ -57,7 +57,7 @@ public class CheatManager : MonoBehaviour
 
             if (GameManager.Instance.currentStage >= 10)
             {
-                SceneManager.LoadScene(mainMenuSceneName);
+                SceneManager.LoadScene("EndingScene");
             }
             else
             {
